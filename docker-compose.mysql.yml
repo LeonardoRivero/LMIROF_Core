@@ -1,0 +1,23 @@
+
+#this file you can run as follow command:
+#docker-compose -f docker-compose.mysql.yml up -d
+services:
+  db:
+    image: mysql:8.0.33
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./dataQA:/var/lib/mysql
+    container_name: LMirofdbQA
+    environment:
+      MYSQL_ROOT_PASSWORD: LMirof2024
+      MYSQL_DATABASE: lmirofdb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: adminqa
+    ports:
+      - "3361:3306"
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
