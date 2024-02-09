@@ -18,9 +18,8 @@ from .Controllers.views import *
 
 
 urlpatterns = [
-    path('api/provider/create/', CreateProvider.as_view()),
-    path('api/provider/list/', ListProviders.as_view()),
-    path('api/product/create/', CreateProduct.as_view()),
-    path('api/product/list/', ListProduct.as_view()),
-    path('api/product/filter/', FilterProduct.as_view()),
+    path('api/seller/create/', CreateSeller.as_view()),
+    path('api/seller/list/', ListSeller.as_view()),
+    # path('api/product/create/', CreateProduct.as_view()),
+    # path('api/product/list/', ListProduct.as_view()),
 ]

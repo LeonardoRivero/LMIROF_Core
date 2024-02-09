@@ -46,5 +46,33 @@
             "description": "Carnet Diplomatico",
             "abbreviation": "CD"
         }
+    },
+    {
+        "model": "Settings.gender",
+        "pk": 1,
+        "fields": {
+            "name_gender": "Femenino"
+        }
+    },
+    {
+        "model": "Settings.gender",
+        "pk": 2,
+        "fields": {
+            "name_gender": "Masculino"
+        }
+    },
+    {
+        "model": "Settings.operationtype",
+        "pk": 1,
+        "fields": {
+            "description": "Venta"
+        }
+    },
+    {
+        "model": "Settings.operationtype",
+        "pk": 2,
+        "fields": {
+            "description": "Compra"
+        }
     }
 ]

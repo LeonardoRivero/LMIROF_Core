@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "Providers",
     "Settings",
+    "Sales"
 ]
 
 MIDDLEWARE = [
