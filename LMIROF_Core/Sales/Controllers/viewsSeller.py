@@ -4,7 +4,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 from Sales.Domain.Entities import SellerEntity
-from Sales.Application.SalesUseCases import CreateSellerUseCase
+from LMIROF_Core.Sales.Application.SellerUseCases import CreateSellerUseCase
 from http import HTTPStatus
 from LMIROF_Core.containers import container
 
