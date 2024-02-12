@@ -4,8 +4,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
+from Providers.Application.ProductUseCases import *
 from Providers.Domain.Entities import ProductEntity, ProviderEntity
-from Providers.Application.ProviderUseCases import CreateProductUseCase, CreateProviderUseCase, GetProductByNameUseCase
+from Providers.Application.ProviderUseCases import CreateProviderUseCase
 from Providers.serializers import ProviderSerializer
 from http import HTTPStatus
 from LMIROF_Core.containers import container

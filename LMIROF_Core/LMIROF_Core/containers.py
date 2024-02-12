@@ -13,10 +13,11 @@ class Container(containers.DeclarativeContainer):
     repositories = providers.Aggregate(provider=providers.Singleton(repos_providers.ProviderRepository),
                                        product=providers.Singleton(
                                            repos_providers.ProductRepository),
-                                       seller=providers.Singleton(repos_sales.SellerRepository),
-                                       sale=providers.Singleton(repos_sales.SaleRepository),
+                                       seller=providers.Singleton(
+                                           repos_sales.SellerRepository),
+                                       sale=providers.Singleton(
+                                           repos_sales.SaleRepository),
                                        sale_product=providers.Singleton(repos_sales.SaleProductRepository))
-    
 
     provider_serializer = providers.Object(
         serializers_providers.ProviderSerializer)
@@ -26,7 +27,9 @@ class Container(containers.DeclarativeContainer):
         serializers_sales.SellerSerializer)
     sale_serializer = providers.Object(
         serializers_sales.SaleSerializer)
-    
+    sale_request_serializer = providers.Object(
+        serializers_sales.SaleRequestSerializer)
+
     model_provider = providers.Object(models_provider.Provider)
     model_product = providers.Object(models_provider.Product)
     model_seller = providers.Object(models_sales.Seller)

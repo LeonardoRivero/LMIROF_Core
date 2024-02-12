@@ -4,11 +4,14 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 from Sales.Domain.Entities import SellerEntity
-from LMIROF_Core.Sales.Application.SellerUseCases import CreateSellerUseCase
+from Sales.Application.SellerUseCases import CreateSellerUseCase
 from http import HTTPStatus
 from LMIROF_Core.containers import container
 
 # Create your views here.
+# Actuaizar catalogo
+# Reuniones cada 15 dias
+# Genrerar froamto para reportes
 
 
 class CreateSeller(generics.CreateAPIView):

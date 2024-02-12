@@ -4,6 +4,8 @@ from django.db.models.query import QuerySet
 
 
 T = TypeVar('T')
+
+
 class UseCase(ABC):
     @abstractmethod
     def execute(self, payload: Generic[T]) -> Generic[T] or Iterable[Generic[T]]:
@@ -38,3 +40,9 @@ class Repository(ABC):
     @abstractmethod
     def update_partial(self, entity: dict, pk: int):
         raise NotImplementedError
+
+
+class Mediator(ABC):
+
+    def notify(self, sender: UseCase, event: dict) -> None:
+        pass
