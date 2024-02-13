@@ -1,16 +1,17 @@
-from ..Application.MediatorUseCase import ConcreteMediator
+from typing import List
 from Providers.Domain.Entities import ProductEntity
 from ..Domain.Request import SaleRequest
 from ..Domain.Interfaces import Repository, UseCase
 from ..Domain.Entities import SaleEntity, SaleProductEntity
 from LMIROF_Core.containers import container
+from datetime import date, timedelta, timezone, datetime
+from dateutil import relativedelta
 
 
 class CreateSaleUseCase(UseCase):
     def __init__(self, repository_sale: Repository = container.repositories("sale"), repository_sale_product: Repository = container.repositories("sale_product")):
         self.repository_sale = repository_sale
         self.repository_sale_product = repository_sale_product
-        self.mediator = ConcreteMediator()
 
     def execute(self, request: SaleRequest) -> SaleEntity:
         sale_entity = SaleEntity(
@@ -29,3 +30,22 @@ class CreateSaleUseCase(UseCase):
                                                     sale_price=float(item["sale_price"]), sale=record.id, product=item["id"], total=total)
             self.repository_sale_product.add(sale_product_entity)
         return record
+
+
+class GetSalesBySellerIdUseCase(UseCase):
+    def __init__(self, repository_sale: Repository = container.repositories("sale")):
+        self.repository_sale = repository_sale
+
+    def execute(self, id_seller: int) -> List[SaleEntity]:
+        # current_month = datetime.now(tz=timezone.utc).date().replace(day=1)
+        # next_month = current_month + relativedelta.relativedelta(months=1)
+        # data = self.repository_sale.find_by_parameter(
+        #     {"seller": id_seller, 'date_created__gte': current_month, 'date_created__lt': next_month})
+        # return data
+
+        today = datetime.today()
+        start_week = today - timedelta(today.weekday())
+        end_week = start_week + timedelta(7)
+        data = self.repository_sale.find_by_parameter(
+            {"seller": id_seller, 'date_created__gte': start_week.date(), 'date_created__lte': end_week.date()})
+        return data

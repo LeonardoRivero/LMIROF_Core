@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Iterable, List
 from Providers.Domain.Entities import ProductEntity
+import datetime
 
 
 @dataclass
@@ -26,6 +27,7 @@ class PurchaseEntity:
 @dataclass
 class SaleEntity:
     reference_payment: str
+    date_created: datetime.datetime = None
     seller: int = 0
     id: int = 0
 

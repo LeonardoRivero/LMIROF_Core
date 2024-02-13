@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Purchase, Sale, Seller
+from .models import Purchase, Sale, SaleProduct, Seller
 
 
 class SellerSerializer(serializers.ModelSerializer):
@@ -20,6 +20,12 @@ class SaleSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class SaleProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SaleProduct
+        fields = "__all__"
+
+
 class ProductRequestSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
     sale_price = serializers.DecimalField(max_digits=9, decimal_places=2)
@@ -27,7 +33,24 @@ class ProductRequestSerializer(serializers.Serializer):
 
 
 class SaleRequestSerializer(serializers.Serializer):
-
     reference_payment = serializers.CharField(max_length=200)
     seller = serializers.IntegerField()
     product = serializers.ListField(child=ProductRequestSerializer())
+
+
+class SaledProductSerializer(serializers.Serializer):
+    gain = serializers.CharField(max_length=200)
+    sale_price = serializers.FloatField()
+    name = serializers.CharField(max_length=200)
+
+
+class SummaryGainSellerSerializer(serializers.Serializer):
+    date_sale = serializers.DateTimeField()
+    reference_payment = serializers.CharField(max_length=200)
+    products = serializers.ListField(child=SaledProductSerializer())
+
+
+class PaySellerSerializer(serializers.Serializer):
+    name_seller = serializers.CharField(max_length=200)
+    total_to_pay = serializers.FloatField()
+    resume = serializers.ListField(child=SummaryGainSellerSerializer())

@@ -29,11 +29,14 @@ class Container(containers.DeclarativeContainer):
         serializers_sales.SaleSerializer)
     sale_request_serializer = providers.Object(
         serializers_sales.SaleRequestSerializer)
+    sale_product_serializer = providers.Object(
+        serializers_sales.SaleProductSerializer)
 
     model_provider = providers.Object(models_provider.Provider)
     model_product = providers.Object(models_provider.Product)
     model_seller = providers.Object(models_sales.Seller)
     model_sale = providers.Object(models_sales.Sale)
+    model_sale_product = providers.Object(models_sales.SaleProduct)
 
 
 container = Container()

@@ -1,15 +1,37 @@
 from abc import ABC, ABCMeta, abstractmethod
 from typing import Generic, Iterable, TypeVar
 from django.db.models.query import QuerySet
+from ..Domain.Entities import SellerEntity
 
 
 T = TypeVar('T')
 
 
+class Mediator(ABC):
+
+    def notify(self, sender: object, event: dict) -> None:
+        pass
+
+    def getSellerById(self, seller_id: int) -> SellerEntity:
+        pass
+
+
 class UseCase(ABC):
+
+    def __init__(self, mediator: Mediator = None) -> None:
+        self._mediator = mediator
+
     @abstractmethod
     def execute(self, payload: Generic[T]) -> Generic[T] or Iterable[Generic[T]]:
         raise NotImplementedError
+
+    @property
+    def mediator(self) -> Mediator:
+        return self._mediator
+
+    @mediator.setter
+    def mediator(self, mediator: Mediator) -> None:
+        self._mediator = mediator
 
 
 class Repository(ABC):
@@ -40,9 +62,3 @@ class Repository(ABC):
     @abstractmethod
     def update_partial(self, entity: dict, pk: int):
         raise NotImplementedError
-
-
-class Mediator(ABC):
-
-    def notify(self, sender: UseCase, event: dict) -> None:
-        pass

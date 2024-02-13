@@ -65,6 +65,7 @@ class SellerRepository(Repository):
             return data
         return None
 
+
 class SaleRepository(Repository):
     class SaverSerializer(serializers.ModelSerializer):
         class Meta:
@@ -120,6 +121,7 @@ class SaleRepository(Repository):
             return data
         return None
 
+
 class PurchaseRepository(Repository):
     class SaverSerializer(serializers.ModelSerializer):
         class Meta:
@@ -174,6 +176,7 @@ class PurchaseRepository(Repository):
         if (data.exists()):
             return data
         return None
+
 
 class SaleProductRepository(Repository):
     class SaverSerializer(serializers.ModelSerializer):
