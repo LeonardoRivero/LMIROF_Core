@@ -48,6 +48,14 @@
         }
     },
     {
+        "model": "Settings.idtype",
+        "pk": 7,
+        "fields": {
+            "description": "Numero Unico Tributario",
+            "abbreviation": "NIT"
+        }
+    },
+    {
         "model": "Settings.gender",
         "pk": 1,
         "fields": {
