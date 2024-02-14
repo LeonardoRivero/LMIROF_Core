@@ -17,3 +17,7 @@ Finally, populate your database with command:
 ```sh
 python ./manage.py cities_light
 ```
+
+## Captura para restaurar la base de datos a traves de adminer
+
+![alt text](image.png)
