@@ -31,7 +31,6 @@ class Product (models.Model):
     name = models.CharField(max_length=90, null=False)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
     reference = models.CharField(max_length=20)
-    price = models.DecimalField(max_digits=9, decimal_places=2)
     status = models.BooleanField()
     date_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)

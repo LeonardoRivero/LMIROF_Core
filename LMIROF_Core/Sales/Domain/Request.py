@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Iterable, List
 from Providers.Domain.Entities import ProductEntity
-from Sales.Domain.Entities import PurchaseEntity, SaleEntity
+from Sales.Domain.Entities import SaleEntity
 
 
 @dataclass

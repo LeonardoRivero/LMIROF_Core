@@ -18,13 +18,6 @@ class SellerEntity:
 
 
 @dataclass
-class PurchaseEntity:
-    invoice_id: str
-    provider: int = 0
-    id: int = 0
-
-
-@dataclass
 class SaleEntity:
     reference_payment: str
     date_created: datetime.datetime = None

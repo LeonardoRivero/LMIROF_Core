@@ -38,29 +38,10 @@ class Sale (models.Model):
     objects = models.Manager()
 
 
-class Purchase (models.Model):
-    id = models.AutoField(primary_key=True)
-    provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
-    product = models.ManyToManyField(Product,  through='PurchaseProduct')
-    invoice_id = models.CharField(max_length=90, null=False)
-    date_created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
-
-    objects = models.Manager()
-
-
 class SaleProduct(models.Model):
     quantity = models.IntegerField()
     gain = models.DecimalField(max_digits=9, decimal_places=2)
     sale_price = models.DecimalField(max_digits=9, decimal_places=2)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE)
-    total = models.DecimalField(max_digits=9, decimal_places=2)
-
-
-class PurchaseProduct(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    unit_price = models.DecimalField(max_digits=9, decimal_places=2)
     total = models.DecimalField(max_digits=9, decimal_places=2)

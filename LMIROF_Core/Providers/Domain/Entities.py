@@ -21,7 +21,6 @@ class ProviderEntity:
 class ProductEntity:
     name: str
     reference: str
-    price: float = 0
     status: bool = True
     id: int = 0
     provider: int = 0

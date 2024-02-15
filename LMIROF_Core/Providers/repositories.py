@@ -60,7 +60,7 @@ class ProviderRepository(Repository):
             return False
 
     def find_by_parameter(self, parameters: dict) -> Iterable[ProviderEntity]:
-        data = ProviderEntity.objects.filter(**parameters)
+        data = Provider.objects.filter(**parameters)
         if (data.exists()):
             return data
         return None
