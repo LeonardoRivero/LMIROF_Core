@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from Inventory.Application.InventoryUseCases import DecrementProductBySaleUseCase
 from Sales.Domain.Interfaces import Mediator
 from Providers.Domain.Interfaces import UseCase
 from Sales.Application.MediatorUseCase import ConcreteMediator
@@ -18,6 +19,7 @@ class CreateSale(generics.CreateAPIView):
     serializer_class = container.sale_serializer()
     mediator = ConcreteMediator()
     use_case = CreateSaleUseCase()
+    decrement_product_use_case = DecrementProductBySaleUseCase()
 
     @extend_schema(
         request=container.sale_request_serializer(),
@@ -29,6 +31,7 @@ class CreateSale(generics.CreateAPIView):
             entity = SaleRequest(**request.data)
             self.use_case.mediator = self.mediator
             data = self.use_case.execute(entity)
+            self.decrement_product_use_case.execute(entity.products, data.id)
             response = self.serializer_class(data, many=False)
             return Response(response.data, HTTPStatus.CREATED)
         except (TypeError, ValueError) as e:

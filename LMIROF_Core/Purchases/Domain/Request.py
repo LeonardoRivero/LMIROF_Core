@@ -17,4 +17,4 @@ class PurchaseRequest:
     subtotal: float = 0
     total: float = 0
     provider: int = 0
-    product: List[ProductPurchaseRequest] = field(default_factory=list)
+    products: List[ProductPurchaseRequest] = field(default_factory=list)

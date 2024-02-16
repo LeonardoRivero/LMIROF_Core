@@ -2,6 +2,8 @@ from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
+from Inventory.Application.InventoryUseCases import IncrementProductByPurchaseUseCase
+from Inventory.Domain.Entities import InventoryEntity
 from Purchases.Domain.Interfaces import UseCase
 from Purchases.Application.PurchaseUseCases import CreatePurchaseUseCase, GetPurchaseByIdUseCase
 from Purchases.Domain.Request import PurchaseRequest
@@ -12,6 +14,7 @@ from LMIROF_Core.containers import container
 class CreatePurchase(generics.CreateAPIView):
     serializer_class = container.purchase_serializer()
     use_case = CreatePurchaseUseCase()
+    increment_product_use_case = IncrementProductByPurchaseUseCase()
 
     @extend_schema(
         request=container.purchase_request_serializer(),
@@ -23,8 +26,10 @@ class CreatePurchase(generics.CreateAPIView):
             data = PurchaseRequest(**request.data)
             record = self.use_case.execute(data)
             response = self.serializer_class(record, many=False)
+            self.increment_product_use_case.execute(data.products, record.id)
             return Response(response.data, HTTPStatus.CREATED)
         except TypeError as e:
+            exception = e
             return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
 
 

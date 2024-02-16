@@ -10,9 +10,8 @@ class PurchaseSerializer(serializers.ModelSerializer):
 
 class PurchaseProductRequestSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
-    tax = serializers.IntegerField()
-    unit_price = serializers.DecimalField(max_digits=9, decimal_places=2)
     product_id = serializers.IntegerField()
+    unit_price = serializers.DecimalField(max_digits=9, decimal_places=2)
 
 
 class PurchaseRequestSerializer(serializers.Serializer):
@@ -21,4 +20,4 @@ class PurchaseRequestSerializer(serializers.Serializer):
     subtotal = serializers.DecimalField(max_digits=9, decimal_places=2)
     total = serializers.DecimalField(max_digits=9, decimal_places=2)
     provider = serializers.IntegerField()
-    product = serializers.ListField(child=PurchaseProductRequestSerializer())
+    products = serializers.ListField(child=PurchaseProductRequestSerializer())

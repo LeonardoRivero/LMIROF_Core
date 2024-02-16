@@ -1,5 +1,5 @@
 from typing import List
-from Providers.Domain.Entities import ProductEntity
+from Purchases.Domain.Entities import PurchaseProductEntity
 from ..Domain.Request import SaleRequest
 from ..Domain.Interfaces import Repository, UseCase
 from ..Domain.Entities import SaleEntity, SaleProductEntity
@@ -20,11 +20,11 @@ class CreateSaleUseCase(UseCase):
         if (record == None):
             raise TypeError()
 
-        for item in request.product:
-            product: ProductEntity = self.mediator.notify(self,
-                                                          {"product_id": item["id"]})
+        for item in request.products:
+            product: PurchaseProductEntity = self.mediator.notify(self,
+                                                                  {"product": item["id"]})
             gain = (float(item["sale_price"]) -
-                    float(product.price))*int(item["quantity"])
+                    float(product.unit_price))*int(item["quantity"])
             total = (float(item["sale_price"])*int(item["quantity"]))
             sale_product_entity = SaleProductEntity(quantity=int(item["quantity"]), gain=round(gain, 2),
                                                     sale_price=float(item["sale_price"]), sale=record.id, product=item["id"], total=total)

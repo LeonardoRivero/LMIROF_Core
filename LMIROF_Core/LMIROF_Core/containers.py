@@ -9,6 +9,9 @@ from Sales import models as models_sales
 from Purchases import models as models_purchases
 from Purchases import repositories as repos_purchases
 from Purchases import serializers as serializers_purchases
+from Inventory import models as models_inventory
+from Inventory import repositories as repos_inventory
+from Inventory import serializers as serializers_inventory
 
 
 class Container(containers.DeclarativeContainer):
@@ -25,7 +28,9 @@ class Container(containers.DeclarativeContainer):
                                        purchase=providers.Singleton(
                                            repos_purchases.PurchaseRepository),
                                        purchase_product=providers.Singleton(
-                                           repos_purchases.PurchaseProductRepository)
+                                           repos_purchases.PurchaseProductRepository),
+                                       inventory=providers.Singleton(
+                                           repos_inventory.InventoryRepository)
                                        )
 
     provider_serializer = providers.Object(
@@ -44,6 +49,8 @@ class Container(containers.DeclarativeContainer):
         serializers_purchases.PurchaseSerializer)
     purchase_request_serializer = providers.Object(
         serializers_purchases.PurchaseRequestSerializer)
+    inventory_serializer = providers.Object(
+        serializers_inventory.InventorySerializer)
 
     model_provider = providers.Object(models_provider.Provider)
     model_product = providers.Object(models_provider.Product)
@@ -51,7 +58,7 @@ class Container(containers.DeclarativeContainer):
     model_sale = providers.Object(models_sales.Sale)
     model_sale_product = providers.Object(models_sales.SaleProduct)
     model_purchase_product = providers.Object(models_purchases.PurchaseProduct)
-    model_purchase = providers.Object(models_purchases.Purchase)
+    model_inventory = providers.Object(models_inventory.Inventory)
 
 
 container = Container()

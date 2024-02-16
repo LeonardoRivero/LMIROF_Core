@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     "Providers",
     "Settings",
     "Sales",
-    "Purchases"
+    "Purchases",
+    "Inventory"
 ]
 
 MIDDLEWARE = [

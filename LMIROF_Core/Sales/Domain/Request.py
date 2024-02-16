@@ -15,5 +15,5 @@ class ProductRequest:
 @dataclass
 class SaleRequest:
     reference_payment: str
-    product: List[ProductRequest] = field(default_factory=list)
+    products: List[ProductRequest] = field(default_factory=list)
     seller: int = 0
