@@ -19,7 +19,7 @@ from Purchases.Controllers.views import *
 
 urlpatterns = [
     path('api/purchase/create/', CreatePurchase.as_view()),
-    # path('api/seller/list/', ListSeller.as_view()),
+    # path('api/purchase/list/', ListPurchases.as_view()),
     # path('api/sale/create/', CreateSale.as_view()),
     # path('api/sale/list/', ListSales.as_view()),
     # path('api/saleproduct/list/', ListSalesProduct.as_view()),

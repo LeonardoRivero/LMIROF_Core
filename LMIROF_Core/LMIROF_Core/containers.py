@@ -59,6 +59,7 @@ class Container(containers.DeclarativeContainer):
     model_sale_product = providers.Object(models_sales.SaleProduct)
     model_purchase_product = providers.Object(models_purchases.PurchaseProduct)
     model_inventory = providers.Object(models_inventory.Inventory)
+    model_purchase = providers.Object(models_purchases.Purchase)
 
 
 container = Container()

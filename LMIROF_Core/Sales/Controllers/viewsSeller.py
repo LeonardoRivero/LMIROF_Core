@@ -16,7 +16,7 @@ from LMIROF_Core.containers import container
 
 class CreateSeller(generics.CreateAPIView):
     serializer_class = container.seller_serializer()
-    use_case = CreateSellerUseCase()
+    use_case = CreateSellerUseCase(container.repositories("seller"))
 
     @extend_schema(
         request=container.seller_serializer(),

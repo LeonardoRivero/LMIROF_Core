@@ -57,3 +57,17 @@ class GetPurchaseByID(generics.RetrieveAPIView):
             return Response(response.data, HTTPStatus.OK)
         except (TypeError, ValueError) as e:
             return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
+
+
+# @extend_schema(
+#     description='List purchases',
+#     summary="List all purchases ",
+# )
+# class ListPurchases(generics.ListAPIView):
+#     queryset = container.model_purchase().objects.all()
+#     serializer_class = container.purchase_serializer()
+#     model = container.model_purchase()
+
+#     def get_serializer_class(self):
+#         self.serializer_class.Meta.depth = int(1)
+#         return self.serializer_class

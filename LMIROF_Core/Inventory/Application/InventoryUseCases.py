@@ -11,8 +11,11 @@ class IncrementProductByPurchaseUseCase(UseCase):
         self.repository = repository
 
     def execute(self, list_products: List[ProductPurchaseRequest], purchase_id: int) -> List[InventoryEntity]:
-        try:
-            for product in list_products:
+        for product in list_products:
+            product_registered = self.repository.find_by_parameter(
+                {"product": product["product_id"]})
+
+            if (product_registered is not None):
                 entity: InventoryEntity = self.repository.get_by_id(
                     product["product_id"])
                 input_total = entity.input + int(product["quantity"])
@@ -26,56 +29,15 @@ class IncrementProductByPurchaseUseCase(UseCase):
                                                  )
 
                 self.repository.update(entity_updated,  product["product_id"])
-        except Exception:
-            new_entity = InventoryEntity(
-                product=product["product_id"],
-                input=int(product["quantity"]),
-                output=0,
-                stock=int(product["quantity"]),
-                operation_type="PURCHASE",
-                operation_id=purchase_id)
-            self.repository.add(new_entity)
-
-        # try:
-        #     for product in list_products:
-        #         entity: InventoryEntity = self.repository.get_by_id(
-        #             product["product_id"])
-        #         quantity = entity.available_quantity + int(product["quantity"])
-        #         carry_amount = float(entity.carrying_amount) + \
-        #             (int(product["quantity"])*float(product["unit_price"]))
-
-        #         entity_updated = InventoryEntity(available_quantity=quantity,
-        #                                          carrying_amount=carry_amount,
-        #                                          operation_type="PURCHASE",
-        #                                          product=product["product_id"])
-
-        #         self.repository.update(entity_updated,  product["product_id"])
-        # except Exception:
-        #     new_entity = InventoryEntity(
-        #         operation_type="PURCHASE", carrying_amount=int(product["quantity"])*float(product["unit_price"]), available_quantity=int(product["quantity"]), product=product["product_id"])
-        #     self.repository.add(new_entity)
-
-        # for product in list_products:
-        #     product_registered = self.repository.find_by_parameter(
-        #         {"product": product["product_id"]})
-
-        #     if (product_registered is not None):
-        #         entity: InventoryEntity = self.repository.get_by_id(
-        #             product["product_id"])
-        #         quantity = entity.available_quantity + int(product["quantity"])
-        #         carry_amount = float(entity.carrying_amount) + \
-        #             (int(product["quantity"])*float(product["unit_price"]))
-
-        #         entity_updated = InventoryEntity(available_quantity=quantity,
-        #                                          carrying_amount=carry_amount,
-        #                                          operation_type="PURCHASE",
-        #                                          product=product["product_id"])
-
-        #         self.repository.update(entity_updated,  product["product_id"])
-        #     else:
-        #         new_entity = InventoryEntity(
-        #             operation_type="PURCHASE", carrying_amount=int(product["quantity"])*float(product["unit_price"]), available_quantity=int(product["quantity"]), product=product["product_id"])
-        #         self.repository.add(new_entity)
+            else:
+                new_entity = InventoryEntity(
+                    product=product["product_id"],
+                    input=int(product["quantity"]),
+                    output=0,
+                    stock=int(product["quantity"]),
+                    operation_type="PURCHASE",
+                    operation_id=purchase_id)
+                self.repository.add(new_entity)
 
 
 class DecrementProductBySaleUseCase(UseCase):
@@ -88,9 +50,6 @@ class DecrementProductBySaleUseCase(UseCase):
                 entity: InventoryEntity = self.repository.get_by_id(
                     product["id"])
                 quantity = entity.stock - int(product["quantity"])
-                # carry_amount = float(entity.carrying_amount) - \
-                #     (int(product["quantity"])*float(product["sale_price"]))
-
                 entity_updated = InventoryEntity(stock=quantity,
                                                  input=entity.input,
                                                  output=product["quantity"],

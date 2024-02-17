@@ -22,7 +22,7 @@ class Provider (models.Model):
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
-        self.business_name = self.business_name.capitalize()
+        self.business_name = self.business_name.title()
         super(Provider, self).save(*args, **kwargs)
 
 
@@ -38,5 +38,5 @@ class Product (models.Model):
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
-        self.name = self.name.capitalize()
+        self.name = self.name.title()
         super(Product, self).save(*args, **kwargs)

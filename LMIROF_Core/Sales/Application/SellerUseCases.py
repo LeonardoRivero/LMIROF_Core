@@ -2,12 +2,11 @@ from typing import List
 from ..Domain.DTOs import PaySellerDTO, SaledProductDTO, SummaryGainSellerDTO
 from ..Domain.Interfaces import Repository, UseCase
 from ..Domain.Entities import SaleEntity, SaleProductEntity, SellerEntity
-from LMIROF_Core.containers import container
 from django.db.models import QuerySet
 
 
 class CreateSellerUseCase(UseCase):
-    def __init__(self, repository: Repository = container.repositories("seller")):
+    def __init__(self, repository: Repository):
         self.repository = repository
 
     def execute(self, entity: SellerEntity) -> SellerEntity:
@@ -21,7 +20,7 @@ class GetSummaryGainSellerUseCase(UseCase):
     saled_products_dto: List[SaledProductDTO] = []
     total_to_pay: float = 0
 
-    def __init__(self, repository_sale: Repository = container.repositories("sale"), repository_sale_product: Repository = container.repositories("sale_product")):
+    def __init__(self, repository_sale: Repository, repository_sale_product: Repository):
         self.repository_sale = repository_sale
         self.repository_sale_product = repository_sale_product
 
@@ -60,7 +59,7 @@ class GetSummaryGainSellerUseCase(UseCase):
 
 
 class GetSellerByIdUseCase(UseCase):
-    def __init__(self, repository: Repository = container.repositories("seller")):
+    def __init__(self, repository: Repository):
         self.repository = repository
 
     def execute(self, seller_id: int) -> SellerEntity:

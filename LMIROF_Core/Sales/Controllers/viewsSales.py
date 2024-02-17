@@ -68,7 +68,7 @@ class ListSalesProduct(generics.ListAPIView):
 
 class SearchByFilterSale(generics.RetrieveAPIView):
     serializer_class = container.sale_serializer()
-    use_case = GetSalesBySellerIdUseCase()
+    use_case = GetSalesBySellerIdUseCase(container.repositories("seller"))
 
     def get_serializer_class(self):
         self.serializer_class.Meta.depth = int(1)
@@ -100,7 +100,8 @@ class SearchByFilterSale(generics.RetrieveAPIView):
 class SummarySalesBySeller(generics.RetrieveAPIView):
     serializer_class = PaySellerSerializer()
     mediator: Mediator = ConcreteMediator()
-    use_case: UseCase = GetSummaryGainSellerUseCase()
+    use_case: UseCase = GetSummaryGainSellerUseCase(
+        container.repositories("sale"), container.repositories("sale_product"))
 
     @extend_schema(
         description='List sales by seller with resume',
