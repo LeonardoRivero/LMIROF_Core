@@ -22,5 +22,7 @@ class ProductEntity:
     name: str
     reference: str
     status: bool = True
+    distribution_type:int=0
     id: int = 0
     provider: int = 0
+

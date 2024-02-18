@@ -77,10 +77,23 @@
         }
     },
     {
-        "model": "Settings.operationtype",
+        "model": "Settings.distributionproducttype",
+        "pk": 1,
+        "fields": {
+            "description": "Unidad",
+            "profit_seller": 0.45,
+            "profit_bussiness": 0.45,
+            "profit_operational": 0.1
+        }
+    },
+    {
+        "model": "Settings.distributionproducttype",
         "pk": 2,
         "fields": {
-            "description": "Compra"
+            "description": "Kit",
+            "profit_seller": 0.38,
+            "profit_bussiness": 0.52,
+            "profit_operational": 0.1
         }
     }
 ]

@@ -28,7 +28,8 @@ class SaleEntity:
 @dataclass
 class SaleProductEntity:
     quantity: int = 0
-    gain: int = 0
+    gain_seller: float = 0
+    gain_business: float = 0
     sale_price: float = 0
     product: int = 0
     sale: int = 0
