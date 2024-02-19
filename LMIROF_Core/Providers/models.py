@@ -32,7 +32,8 @@ class Product (models.Model):
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
     reference = models.CharField(max_length=20)
     status = models.BooleanField()
-    distribution_type = models.ForeignKey(DistributionProductType, on_delete=models.CASCADE)
+    distribution_type = models.ForeignKey(
+        DistributionProductType, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 

@@ -9,13 +9,14 @@ from datetime import date, timedelta, timezone, datetime
 from dateutil import relativedelta
 from decimal import Decimal
 
+
 class CreateSaleUseCase(UseCase):
     def __init__(self, repository_sale: Repository = container.repositories("sale"), repository_sale_product: Repository = container.repositories("sale_product")):
         self.repository_sale = repository_sale
         self.repository_sale_product = repository_sale_product
 
     def execute(self, request: SaleRequest) -> SaleEntity:
-        sale_entity = SaleEntity(reference_payment=request.reference_payment, 
+        sale_entity = SaleEntity(reference_payment=request.reference_payment,
                                  seller=request.seller)
         record: SaleEntity = self.repository_sale.add(sale_entity)
         if (record == None):
@@ -23,20 +24,26 @@ class CreateSaleUseCase(UseCase):
 
         for item in request.products:
             purchase_product: PurchaseProductEntity = self.mediator.notify(self,
-                                                                  {"product": item["id"]})
-            
-            gain=Decimal(item["sale_price"])-Decimal(purchase_product.unit_price)
+                                                                           {"product": item["id"]})
 
-            product=self.mediator.getProductById( item["id"])
-            gain_seller = round((Decimal(product.distribution_type.profit_seller)*Decimal(gain)),2)
-            gain_business=Decimal(product.distribution_type.profit_bussiness)* Decimal(gain)
+            gain = Decimal(item["sale_price"]) - \
+                Decimal(purchase_product.unit_price)
+
+            product = self.mediator.getProductById(item["id"])
+            gain_seller = round(
+                (Decimal(product.distribution_type.profit_seller)*Decimal(gain)), 2)
+            gain_business = Decimal(
+                product.distribution_type.profit_bussiness) * Decimal(gain)
             total = (float(item["sale_price"])*int(item["quantity"]))
-            sale_product_entity = SaleProductEntity(quantity=int(item["quantity"]), 
-                                                    gain_seller=round(gain_seller, 2),
-                                                    gain_business=round(gain_business, 2),
-                                                    sale_price=float(item["sale_price"]), 
-                                                    sale=record.id, 
-                                                    product=item["id"], 
+            sale_product_entity = SaleProductEntity(quantity=int(item["quantity"]),
+                                                    gain_seller=round(
+                                                        gain_seller, 2),
+                                                    gain_business=round(
+                                                        gain_business, 2),
+                                                    sale_price=float(
+                                                        item["sale_price"]),
+                                                    sale=record.id,
+                                                    product=item["id"],
                                                     total=total)
             self.repository_sale_product.add(sale_product_entity)
         return record

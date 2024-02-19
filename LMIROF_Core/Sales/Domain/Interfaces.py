@@ -19,6 +19,9 @@ class Mediator(ABC):
     def getProductById(self, product_id: int) -> ProductEntity:
         pass
 
+    def getProductById(self, product_id: int) -> ProductEntity:
+        pass
+
 
 class UseCase(ABC):
 
