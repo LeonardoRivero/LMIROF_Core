@@ -1,6 +1,8 @@
 from abc import ABC, ABCMeta, abstractmethod
 from typing import Generic, Iterable, TypeVar
 from django.db.models.query import QuerySet
+
+from Providers.Domain.Entities import ProductEntity
 from ..Domain.Entities import SellerEntity
 
 
@@ -13,6 +15,9 @@ class Mediator(ABC):
         pass
 
     def getSellerById(self, seller_id: int) -> SellerEntity:
+        pass
+
+    def getProductById(self, product_id: int) -> ProductEntity:
         pass
 
 

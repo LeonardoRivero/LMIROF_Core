@@ -29,7 +29,7 @@ class ProductRequestSerializer(serializers.Serializer):
 class SaleRequestSerializer(serializers.Serializer):
     reference_payment = serializers.CharField(max_length=200)
     seller = serializers.IntegerField()
-    product = serializers.ListField(child=ProductRequestSerializer())
+    products = serializers.ListField(child=ProductRequestSerializer())
 
 
 class SaledProductSerializer(serializers.Serializer):

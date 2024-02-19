@@ -13,7 +13,6 @@ class PurchaseEntity:
 
 @dataclass
 class PurchaseProductEntity:
-    # tax: int = 0
     total: float = 0
     unit_price: float = 0
     quantity: int = 0
