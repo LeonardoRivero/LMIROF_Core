@@ -3,6 +3,7 @@ from Purchases.Domain.Entities import PurchaseEntity, PurchaseProductEntity
 from ..Domain.Request import PurchaseRequest
 from ..Domain.Interfaces import Repository, UseCase
 from LMIROF_Core.containers import container
+from django.db.models.query import QuerySet
 
 
 class CreatePurchaseUseCase(UseCase):
@@ -44,5 +45,5 @@ class GetPurchaseProductByFiltersUseCase(UseCase):
         self.repository_purchase = repository_purchase
         self.repository_purchase_product = repository_purchase_product
 
-    def execute(self, filter: dict) -> PurchaseProductEntity:
+    def execute(self, filter: dict) -> QuerySet:
         return self.repository_purchase_product.find_by_parameter(filter)

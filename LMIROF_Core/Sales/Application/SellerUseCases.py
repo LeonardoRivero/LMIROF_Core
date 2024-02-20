@@ -1,4 +1,5 @@
 from typing import List
+from Sales.Domain.Request import SummarySellerRequest
 from ..Domain.DTOs import PaySellerDTO, SaledProductDTO, SummaryGainSellerDTO
 from ..Domain.Interfaces import Repository, UseCase
 from ..Domain.Entities import SaleEntity, SaleProductEntity, SellerEntity
@@ -15,8 +16,6 @@ class CreateSellerUseCase(UseCase):
 
 
 class GetSummaryGainSellerUseCase(UseCase):
-
-    summary: List[SummaryGainSellerDTO] = []
     saled_products_dto: List[SaledProductDTO] = []
     total_to_pay: float = 0
 
@@ -24,29 +23,36 @@ class GetSummaryGainSellerUseCase(UseCase):
         self.repository_sale = repository_sale
         self.repository_sale_product = repository_sale_product
 
-    def execute(self, seller_id: int) -> PaySellerDTO:
-        sales: QuerySet[SaleEntity] = self.mediator.notify(self,
-                                                           {"seller_id": seller_id})
-
+    def execute(self, summary_seller_request: SummarySellerRequest) -> PaySellerDTO:
+        sales: QuerySet[SaleEntity] = self.mediator.getResumeSalesSeller(
+            summary_seller_request)
+        self.total_to_pay = 0
+        summary: List[SummaryGainSellerDTO] = []
         for sale in sales:
             sale_product: QuerySet = self.repository_sale_product.find_by_parameter({
-                "sale": sale.id})
+                                                                                    "sale": sale.id})
+            if (sale_product == None):
+                continue
             self.saled_products_dto = self.__get_list_saled_products__(
                 sale_product)
             summary_dto = SummaryGainSellerDTO(
-                reference_payment=sale.reference_payment, date_sale=sale.date_created, sale_id=sale.id, products=self.saled_products_dto)
+                reference_payment=sale.reference_payment,
+                date_sale=sale.date_created,
+                sale_id=sale.id,
+                products=self.saled_products_dto)
 
-            self.summary.append(summary_dto)
+            summary.append(summary_dto)
 
         pay_seller_dto = PaySellerDTO(
-            name_seller=self.__getSeller__(seller_id), resume=self.summary, total_to_pay=self.total_to_pay)
+            name_seller=self.__getSeller__(summary_seller_request.id),
+            resume=summary,
+            total_to_pay=self.total_to_pay)
         return pay_seller_dto
 
     def __get_list_saled_products__(self, sale_product: QuerySet[SaleProductEntity]) -> List[SaledProductDTO]:
         saled_products: List[SaledProductDTO] = []
-
         for item in sale_product:
-            gain_seller = item.gain/2
+            gain_seller = item.gain_seller
             saled_products.append(SaledProductDTO(
                 gain=gain_seller, sale_price=item.sale_price, name=item.product.name))
             self.total_to_pay = self.total_to_pay + gain_seller

@@ -23,6 +23,8 @@ urlpatterns = [
     path('api/seller/list/', ListSeller.as_view()),
     path('api/sale/create/', CreateSale.as_view()),
     path('api/sale/list/', ListSales.as_view()),
+    path('api/sale/<int:sale_id>/', GetSaleByID.as_view()),
+    path('api/sale/filter/', FilterSale.as_view()),
     path('api/saleproduct/list/', ListSalesProduct.as_view()),
     path('api/saleproduct/filter/', SearchByFilterSale.as_view()),
     path('api/summaryseller/<int:seller_id>/',

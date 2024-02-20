@@ -50,9 +50,10 @@ class DecrementProductBySaleUseCase(UseCase):
                 entity: InventoryEntity = self.repository.get_by_id(
                     product["id"])
                 quantity = entity.stock - int(product["quantity"])
+                output = entity.output + int(product["quantity"])
                 entity_updated = InventoryEntity(stock=quantity,
                                                  input=entity.input,
-                                                 output=product["quantity"],
+                                                 output=output,
                                                  operation_type="SALE",
                                                  product=product["id"],
                                                  operation_id=sale_id)

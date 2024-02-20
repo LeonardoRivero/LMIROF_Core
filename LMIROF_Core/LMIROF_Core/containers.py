@@ -1,5 +1,4 @@
 from dependency_injector import containers, providers
-
 from Providers import repositories as repos_providers
 from Providers import serializers as serializers_providers
 from Providers import models as models_provider
@@ -51,6 +50,8 @@ class Container(containers.DeclarativeContainer):
         serializers_purchases.PurchaseRequestSerializer)
     inventory_serializer = providers.Object(
         serializers_inventory.InventorySerializer)
+    payseller_serializer = providers.Object(
+        serializers_sales.PaySellerSerializer)
 
     model_provider = providers.Object(models_provider.Provider)
     model_product = providers.Object(models_provider.Product)

@@ -10,14 +10,23 @@
 # CMD [ "python","manage.py","runserver","0.0.0.0:8001" ]
 
 
-FROM docker.io/python:3.11.4 AS BASE
+# FROM python:3.11.4 AS BASE
+# ENV PYTHONUNBUFFERED 1
+# ENV PYTHONDONTWRITEBYTECODE 1
+# WORKDIR /app
+# ARG REQUIREMENTS_FILE
+# COPY ./requirements.txt ./
+# COPY ./$REQUIREMENTS_FILE ./
+# RUN pip install -r $REQUIREMENTS_FILE
+# COPY . .
+# EXPOSE 8000
+
+FROM python:3.11
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 WORKDIR /app
-ARG REQUIREMENTS_FILE
-COPY ./requirements.txt ./
-COPY ./$REQUIREMENTS_FILE ./
-RUN pip install -r $REQUIREMENTS_FILE
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 EXPOSE 8000
-
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
