@@ -1,7 +1,6 @@
 from django.db import models
-from Providers.models import Product, Provider
+from Providers.models import Product
 from Settings.models import Gender, IDType
-
 
 # Create your models here.
 
@@ -10,11 +9,13 @@ class Seller (models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=90, null=False)
     last_name = models.CharField(max_length=90, null=False)
-    identification_type = models.ForeignKey(IDType, on_delete=models.CASCADE)
+    identification_type = models.ForeignKey(
+        IDType, on_delete=models.CASCADE, related_name="sellers")
     identification = models.CharField(max_length=20, null=False)
     email = models.EmailField(max_length=20, unique=True)
     address = models.CharField(max_length=50)
-    gender = models.ForeignKey(Gender, on_delete=models.CASCADE)
+    gender = models.ForeignKey(
+        Gender, on_delete=models.CASCADE, related_name="sellers")
     status = models.BooleanField()
     date_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -29,8 +30,10 @@ class Seller (models.Model):
 
 class Sale (models.Model):
     id = models.AutoField(primary_key=True)
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
-    product = models.ManyToManyField(Product,  through='SaleProduct')
+    seller = models.ForeignKey(
+        Seller, on_delete=models.DO_NOTHING, related_name="sales")
+    product = models.ManyToManyField(
+        Product,  through='SaleProduct', related_name="sales")
     reference_payment = models.CharField(max_length=90, null=False)
     date_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)

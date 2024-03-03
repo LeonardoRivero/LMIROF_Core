@@ -19,4 +19,6 @@ from .Controllers.views import *
 
 urlpatterns = [
     path('api/idtype/list/', ListIDType.as_view()),
+    path('api/distributionproducttype/list/',
+         ListDistributionProductType.as_view()),
 ]

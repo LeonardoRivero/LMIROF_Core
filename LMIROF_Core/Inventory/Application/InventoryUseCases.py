@@ -1,9 +1,12 @@
-from Sales.Domain.Request import ProductRequest
-from Purchases.Domain.Request import ProductPurchaseRequest
-from ..Domain.Interfaces import Repository, UseCase
-from ..Domain.Entities import InventoryEntity
-from LMIROF_Core.containers import container
 from typing import List
+
+from Purchases.Domain.Request import ProductPurchaseRequest
+from Sales.Domain.Request import ProductRequest
+
+from LMIROF_Core.containers import container
+
+from ..Domain.Entities import InventoryEntity
+from ..Domain.Interfaces import Repository, UseCase
 
 
 class IncrementProductByPurchaseUseCase(UseCase):
@@ -41,7 +44,7 @@ class IncrementProductByPurchaseUseCase(UseCase):
 
 
 class DecrementProductBySaleUseCase(UseCase):
-    def __init__(self, repository: Repository = container.repositories("inventory")):
+    def __init__(self, repository: Repository):
         self.repository = repository
 
     def execute(self, list_products: List[ProductRequest], sale_id: int) -> List[InventoryEntity]:

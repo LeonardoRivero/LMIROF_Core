@@ -1,5 +1,5 @@
-from rest_framework import serializers
 from Purchases.models import Purchase
+from rest_framework import serializers
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
@@ -20,4 +20,4 @@ class PurchaseRequestSerializer(serializers.Serializer):
     subtotal = serializers.DecimalField(max_digits=9, decimal_places=2)
     total = serializers.DecimalField(max_digits=9, decimal_places=2)
     provider = serializers.IntegerField()
-    products = serializers.ListField(child=PurchaseProductRequestSerializer())
+    products = PurchaseProductRequestSerializer(many=True)

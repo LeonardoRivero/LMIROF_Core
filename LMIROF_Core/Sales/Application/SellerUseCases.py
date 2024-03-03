@@ -1,9 +1,11 @@
 from typing import List
-from Sales.Domain.Request import SummarySellerRequest
-from ..Domain.DTOs import PaySellerDTO, SaledProductDTO, SummaryGainSellerDTO
-from ..Domain.Interfaces import Repository, UseCase
-from ..Domain.Entities import SaleEntity, SaleProductEntity, SellerEntity
+
 from django.db.models import QuerySet
+from Sales.Domain.Request import SummarySellerRequest
+
+from ..Domain.DTOs import PaySellerDTO, SaledProductDTO, SummaryGainSellerDTO
+from ..Domain.Entities import SaleEntity, SaleProductEntity, SellerEntity
+from ..Domain.Interfaces import Repository, UseCase
 
 
 class CreateSellerUseCase(UseCase):
@@ -31,7 +33,7 @@ class GetSummaryGainSellerUseCase(UseCase):
         for sale in sales:
             sale_product: QuerySet = self.repository_sale_product.find_by_parameter({
                                                                                     "sale": sale.id})
-            if (sale_product == None):
+            if (sale_product is None):
                 continue
             self.saled_products_dto = self.__get_list_saled_products__(
                 sale_product)

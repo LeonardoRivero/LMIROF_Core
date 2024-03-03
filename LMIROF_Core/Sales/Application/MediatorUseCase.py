@@ -1,29 +1,38 @@
-from Sales.Domain.Request import SummarySellerRequest
+from django.db.models.query import QuerySet
+from Providers.Application.ProductUseCases import GetProductByIdUseCase
 from Providers.Domain.Entities import ProductEntity
-from Purchases.Application.PurchaseUseCases import GetPurchaseProductByFiltersUseCase
+from Purchases.Application.PurchaseUseCases import \
+    GetPurchaseProductByFiltersUseCase
+from Sales.Application.SaleUseCases import GetSalesBySellerIdUseCase
 from Sales.Application.SellerUseCases import GetSellerByIdUseCase
 from Sales.Domain.Entities import SellerEntity
-from Sales.Application.SaleUseCases import GetSalesBySellerIdUseCase
-from Providers.Application.ProductUseCases import GetProductByIdUseCase
 from Sales.Domain.Interfaces import Mediator, UseCase
-from django.db.models.query import QuerySet
+from Sales.Domain.Request import SummarySellerRequest
+
 from LMIROF_Core.containers import container
 
 
 class ConcreteMediator(Mediator):
     def __init__(self) -> None:
-        self.getPurchaseProductByFiltersUseCase = GetPurchaseProductByFiltersUseCase()
-        self.getSalesBySellerIdUseCase = GetSalesBySellerIdUseCase(container.repositories(
-            "sale"))
+        self.getPurchaseProductByFiltersUseCase = GetPurchaseProductByFiltersUseCase(
+            container.repositories("purchase"), container.repositories(
+                "purchase_product"
+            ))
+        self.getSalesBySellerIdUseCase = GetSalesBySellerIdUseCase(
+            container.repositories("sale")
+        )
         self.getSellerByIdUseCase = GetSellerByIdUseCase(
-            container.repositories("seller"))
-        self.getProductbyIdUseCase = GetProductByIdUseCase()
+            container.repositories("seller")
+        )
+        self.getProductbyIdUseCase = GetProductByIdUseCase(
+            container.repositories("product")
+        )
 
     def notify(self, sender: object, event: dict) -> object:
         if isinstance(sender, UseCase) and "product" in event.keys():
             queryset: QuerySet = self.getPurchaseProductByFiltersUseCase.execute(
                 event)
-            return queryset.latest('id')
+            return queryset.latest("id")
         # if isinstance(sender, UseCase) and "seller_id" in event.keys():
         #     data = self.getSalesBySellerIdUseCase.execute(event["seller_id"])
         #     if data == None:
@@ -38,6 +47,6 @@ class ConcreteMediator(Mediator):
 
     def getResumeSalesSeller(self, request: SummarySellerRequest):
         data = self.getSalesBySellerIdUseCase.execute(request)
-        if data == None:
+        if data is None:
             return []
         return data

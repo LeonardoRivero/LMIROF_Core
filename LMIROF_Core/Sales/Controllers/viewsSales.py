@@ -1,19 +1,25 @@
+import datetime
+from http import HTTPStatus
+
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from Inventory.Application.InventoryUseCases import \
+    DecrementProductBySaleUseCase
+from Providers.Domain.Interfaces import UseCase
 from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from Inventory.Application.InventoryUseCases import DecrementProductBySaleUseCase
-from Sales.Domain.Interfaces import Mediator
-from Providers.Domain.Interfaces import UseCase
 from Sales.Application.MediatorUseCase import ConcreteMediator
-from Sales.Domain.DTOs import PaySellerDTO
-from Sales.serializers import PaySellerSerializer
+from Sales.Application.SaleUseCases import (CreateSaleUseCase,
+                                            GetSaleByIdUseCase,
+                                            GetSaleByReference,
+                                            GetSalesBySellerIdUseCase)
 from Sales.Application.SellerUseCases import GetSummaryGainSellerUseCase
+from Sales.Domain.DTOs import PaySellerDTO
+from Sales.Domain.Interfaces import Mediator
 from Sales.Domain.Request import SaleRequest, SummarySellerRequest
-from Sales.Application.SaleUseCases import CreateSaleUseCase, GetSaleByIdUseCase, GetSaleByReference, GetSalesBySellerIdUseCase
-from http import HTTPStatus
+from Sales.serializers import PaySellerSerializer
+
 from LMIROF_Core.containers import container
-import datetime
 
 
 class CreateSale(generics.CreateAPIView):
@@ -21,7 +27,8 @@ class CreateSale(generics.CreateAPIView):
     mediator = ConcreteMediator()
     use_case = CreateSaleUseCase(container.repositories(
         "sale"), container.repositories("sale_product"))
-    decrement_product_use_case = DecrementProductBySaleUseCase()
+    decrement_product_use_case = DecrementProductBySaleUseCase(
+        container.repositories("inventory"))
 
     @extend_schema(
         request=container.sale_request_serializer(),
@@ -50,8 +57,11 @@ class ListSales(generics.ListAPIView):
     model = container.model_sale()
 
     def get_serializer_class(self):
-        self.serializer_class.Meta.depth = int(1)
+        self.serializer_class.Meta.depth = 1
         return self.serializer_class
+
+    def get_queryset(self):
+        return container.model_sale().objects.select_related("seller").prefetch_related("product").defer("date_created", "last_modified")
 
 
 @extend_schema(
@@ -59,13 +69,15 @@ class ListSales(generics.ListAPIView):
     summary="List all sales with gain product ",
 )
 class ListSalesProduct(generics.ListAPIView):
-    queryset = container.model_sale_product().objects.all()
     serializer_class = container.sale_product_serializer()
     model = container.model_sale_product()
 
     def get_serializer_class(self):
-        self.serializer_class.Meta.depth = int(1)
+        self.serializer_class.Meta.depth = 1
         return self.serializer_class
+
+    def get_queryset(self):
+        return container.model_sale_product().objects.select_related("sale", "product").all()
 
 
 class SearchByFilterSale(generics.RetrieveAPIView):
@@ -90,12 +102,12 @@ class SearchByFilterSale(generics.RetrieveAPIView):
             if ("id_seller" in request.query_params):
                 data = self.use_case.execute(
                     int(request.query_params["id_seller"]))
-            if (data == None):
+            if (data is None):
                 return Response(None, status=HTTPStatus.BAD_REQUEST)
             is_many = True if len(data) > 1 else False
             response = self.get_serializer(data, many=is_many)
             return Response(response.data, HTTPStatus.CREATED)
-        except (TypeError, ValueError) as e:
+        except (TypeError, ValueError):
             return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
@@ -118,7 +130,7 @@ class SummarySalesBySeller(generics.RetrieveAPIView):
     def get(self, request: Request, seller_id: int = None):
         try:
             data = None
-            if (seller_id == None or "start" not in request.query_params or "end" not in request.query_params):
+            if (seller_id is None or "start" not in request.query_params or "end" not in request.query_params):
                 return Response(None, status=HTTPStatus.BAD_REQUEST)
             payload = SummarySellerRequest(
                 id=seller_id,
@@ -148,14 +160,14 @@ class GetSaleByID(generics.RetrieveAPIView):
     def get(self, request: Request, sale_id: int = None):
         try:
             data = None
-            if (sale_id == None):
+            if (sale_id is None):
                 return Response(None, status=HTTPStatus.BAD_REQUEST)
             data = self.use_case.execute(sale_id)
-            if (data == None):
+            if (data is None):
                 return Response(None, status=HTTPStatus.BAD_REQUEST)
             response = self.get_serializer(data, many=False)
             return Response(response.data, HTTPStatus.OK)
-        except (TypeError, ValueError) as e:
+        except (TypeError, ValueError):
             return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
@@ -180,7 +192,7 @@ class FilterSale(generics.RetrieveAPIView):
             if ("reference" in request.query_params):
                 data = self.use_case.execute(
                     request.query_params["reference"])
-            if (data == None):
+            if (data is None):
                 return Response(None, status=HTTPStatus.BAD_REQUEST)
             response = self.get_serializer(data, many=True)
             return Response(response.data, status=HTTPStatus.ACCEPTED)
