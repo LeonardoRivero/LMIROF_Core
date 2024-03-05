@@ -1,8 +1,11 @@
-from ..Domain.Interfaces import Repository, UseCase
-from ..Domain.Entities import ProductEntity
-from LMIROF_Core.containers import container
-from django.db.models import QuerySet
 from typing import Iterable
+
+from django.db.models import QuerySet
+
+from LMIROF_Core.containers import container
+
+from ..Domain.Entities import ProductEntity
+from ..Domain.Interfaces import Repository, UseCase
 
 
 class CreateProductUseCase(UseCase):
@@ -25,11 +28,11 @@ class GetProductByNameUseCase(UseCase):
 
 
 class GetProductByIdUseCase(UseCase):
-    def __init__(self, repository: Repository = container.repositories("product")):
+    def __init__(self, repository: Repository):
         self.repository = repository
 
-    def execute(self, id: int) -> Iterable[ProductEntity]:
-        record: ProductEntity = self.repository.get_by_id(id)
-        if (record.status == False):
+    def execute(self, id: int) -> ProductEntity:
+        record: ProductEntity = self.repository.get_by_id(id)  # type: ignore
+        if record.status is False:
             raise ValueError("Product is disabled")
         return record

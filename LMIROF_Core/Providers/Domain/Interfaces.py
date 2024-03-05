@@ -1,12 +1,15 @@
-from abc import ABC, ABCMeta, abstractmethod
-from typing import Generic, Iterable, TypeVar
+from abc import ABC, abstractmethod
+from typing import Generic, Type, TypeVar
+
+from django.db.models import Model
 from django.db.models.query import QuerySet
 
+T = TypeVar("T")
 
-T = TypeVar('T')
+
 class UseCase(ABC):
     @abstractmethod
-    def execute(self, payload: Generic[T]) -> Generic[T] or Iterable[Generic[T]]:
+    def execute(self, payload: Generic[T]) -> Generic[T] or None:
         raise NotImplementedError
 
 
@@ -16,11 +19,11 @@ class Repository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_by_id(self, id: int) -> object:
+    def get_by_id(self, id: int) -> Type[Model]:
         raise NotImplementedError
 
     @abstractmethod
-    def get_all(self, ):
+    def get_all(self):
         raise NotImplementedError
 
     @abstractmethod

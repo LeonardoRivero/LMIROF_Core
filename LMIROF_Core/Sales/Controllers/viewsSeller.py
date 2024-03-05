@@ -1,11 +1,13 @@
+from http import HTTPStatus
+
 from django.forms import model_to_dict
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema
-from Sales.Domain.Entities import SellerEntity
 from Sales.Application.SellerUseCases import CreateSellerUseCase
-from http import HTTPStatus
+from Sales.Domain.Entities import SellerEntity
+
 from LMIROF_Core.containers import container
 
 # Create your views here.
@@ -28,7 +30,7 @@ class CreateSeller(generics.CreateAPIView):
             entity = SellerEntity(**request.data)
             record = self.use_case.execute(entity)
             return Response(model_to_dict(record), HTTPStatus.CREATED)
-        except TypeError as e:
+        except TypeError:
             return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
@@ -38,10 +40,12 @@ class CreateSeller(generics.CreateAPIView):
     summary="List all sellers ",
 )
 class ListSeller(generics.ListAPIView):
-    queryset = container.model_seller().objects.all()
     serializer_class = container.seller_serializer()
     model = container.model_seller()
 
     def get_serializer_class(self):
         self.serializer_class.Meta.depth = int(1)
         return self.serializer_class
+
+    def get_queryset(self):
+        return container.model_seller().objects.select_related("gender", "identification_type").defer("date_created", "last_modified").filter(status=True)

@@ -1,23 +1,26 @@
 from rest_framework import serializers
+
 from .models import Sale, SaleProduct, Seller
 
 
 class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seller
-        fields = "__all__"
+        fields = ["id", "name", "last_name", "identification_type",
+                  "identification", "email", "address", "gender", "status"]
 
 
 class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
-        fields = "__all__"
+        fields = ["id", "seller", "product", "reference_payment"]
 
 
 class SaleProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = SaleProduct
-        fields = "__all__"
+        fields = ["quantity", "gain_seller",
+                  "gain_business", "sale_price", "product", "sale", "total"]
 
 
 class ProductRequestSerializer(serializers.Serializer):
@@ -36,12 +39,14 @@ class SaledProductSerializer(serializers.Serializer):
     gain = serializers.CharField(max_length=200)
     sale_price = serializers.FloatField()
     name = serializers.CharField(max_length=200)
+    quantity = serializers.IntegerField()
 
 
 class SummaryGainSellerSerializer(serializers.Serializer):
     date_sale = serializers.DateTimeField()
     reference_payment = serializers.CharField(max_length=200)
-    products = serializers.ListField(child=SaledProductSerializer())
+    products = SaledProductSerializer(many=True)
+    sale_id = serializers.IntegerField()
 
 
 class PaySellerSerializer(serializers.Serializer):

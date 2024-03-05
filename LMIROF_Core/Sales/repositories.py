@@ -1,13 +1,15 @@
-from rest_framework.exceptions import ValidationError
-from django.db.models import QuerySet, ProtectedError
+from dataclasses import asdict
+from typing import Iterable
+
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import ProtectedError, QuerySet
 from django.http import Http404
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from .Domain.Entities import SaleEntity, SaleProductEntity, SellerEntity
 from .Domain.Interfaces import Repository
-from dataclasses import asdict
 from .models import Sale, SaleProduct, Seller
-from typing import Iterable
 
 
 class SellerRepository(Repository):
@@ -82,7 +84,7 @@ class SaleRepository(Repository):
 
     def get_by_id(self, pk: int) -> QuerySet[SaleEntity]:
         try:
-            return Sale.objects.get(pk=pk)
+            return Sale.objects.select_related("seller").prefetch_related("product").get(pk=pk)
         except ObjectDoesNotExist:
             raise Http404
 
@@ -116,7 +118,8 @@ class SaleRepository(Repository):
             return False
 
     def find_by_parameter(self, parameters: dict) -> Iterable[SaleEntity]:
-        data = Sale.objects.filter(**parameters)
+        data = Sale.objects.select_related(
+            "seller").prefetch_related("product").filter(**parameters)
         if (data.exists()):
             return data
         return None
@@ -172,7 +175,8 @@ class SaleProductRepository(Repository):
             return False
 
     def find_by_parameter(self, parameters: dict) -> Iterable[SaleProductEntity]:
-        data = SaleProduct.objects.filter(**parameters)
+        data = SaleProduct.objects.filter(
+            **parameters).select_related("product", "sale")
         if (data.exists()):
             return data
         return None

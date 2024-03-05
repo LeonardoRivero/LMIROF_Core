@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
 import datetime
+from dataclasses import dataclass, field
 from typing import List
 
 
@@ -8,6 +8,7 @@ class SaledProductDTO:
     gain: float
     sale_price: float
     name: str
+    quantity: int
 
 
 @dataclass

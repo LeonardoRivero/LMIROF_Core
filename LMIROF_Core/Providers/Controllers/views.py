@@ -1,15 +1,20 @@
+from http import HTTPStatus
+
 from django.forms import model_to_dict
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from Providers.Application.ProductUseCases import (
+    CreateProductUseCase,
+    GetProductByNameUseCase,
+)
+from Providers.Application.ProviderUseCases import CreateProviderUseCase
+from Providers.Domain.Entities import ProductEntity, ProviderEntity
+from Providers.serializers import ProviderSerializer
 from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
-from drf_spectacular.types import OpenApiTypes
-from Providers.Application.ProductUseCases import *
-from Providers.Domain.Entities import ProductEntity, ProviderEntity
-from Providers.Application.ProviderUseCases import CreateProviderUseCase
-from Providers.serializers import ProviderSerializer
-from http import HTTPStatus
+
 from LMIROF_Core.containers import container
+
 # Create your views here.
 
 
@@ -19,7 +24,7 @@ class CreateProvider(generics.CreateAPIView):
 
     @extend_schema(
         request=ProviderSerializer,
-        description='Create provider',
+        description="Create provider",
         summary="Create a new provider ",
     )
     def post(self, request: Request):
@@ -27,23 +32,25 @@ class CreateProvider(generics.CreateAPIView):
             entity = ProviderEntity(**request.data)
             record = self.use_case.execute(entity)
             return Response(model_to_dict(record), HTTPStatus.CREATED)
-        except TypeError as e:
+        except TypeError:
             return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
 @extend_schema(
     request=ProviderSerializer,
-    description='List provider',
+    description="List provider",
     summary="List all provider ",
 )
 class ListProviders(generics.ListAPIView):
-    queryset = container.model_provider().objects.all()
     serializer_class = container.provider_serializer()
     model = container.model_provider()
 
     def get_serializer_class(self):
-        self.serializer_class.Meta.depth = int(1)
+        self.serializer_class.Meta.depth = 1
         return self.serializer_class
+
+    def get_queryset(self):
+        return container.model_provider().objects.select_related("identification_type", "country", "department", "city").defer("date_created", "last_modified").filter(status=True)
 
 
 class CreateProduct(generics.CreateAPIView):
@@ -52,7 +59,7 @@ class CreateProduct(generics.CreateAPIView):
 
     @extend_schema(
         request=container.product_serializer(),
-        description='Create product',
+        description="Create product",
         summary="Create a new product ",
     )
     def post(self, request: Request):
@@ -60,22 +67,24 @@ class CreateProduct(generics.CreateAPIView):
             entity = ProductEntity(**request.data)
             record = self.use_case.execute(entity)
             return Response(model_to_dict(record), HTTPStatus.CREATED)
-        except TypeError as e:
+        except TypeError:
             return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
 @extend_schema(
     request=ProviderSerializer,
-    description='List product',
+    description="List product",
     summary="List all product ",
 )
 class ListProduct(generics.ListAPIView):
-    queryset = container.model_product().objects.all()
     serializer_class = container.product_serializer()
     model = container.model_product()
 
+    def get_queryset(self):
+        return container.model_product().objects.select_related("provider", "distribution_type").defer("date_created", "last_modified").filter(status=True)
+
     def get_serializer_class(self):
-        self.serializer_class.Meta.depth = int(1)
+        self.serializer_class.Meta.depth = 1
         return self.serializer_class
 
 
@@ -86,19 +95,20 @@ class FilterProduct(generics.RetrieveAPIView):
     @extend_schema(
         responses=container.product_serializer(),
         parameters=[
-            OpenApiParameter(name='name', description='Name',
+            OpenApiParameter(name="name", description="Name",
                              type=str, required=False)
-        ]
+        ],
     )
-    def get(self, request: Request, pk: int = None) -> Response:
+    def get(self, request: Request, pk: int | None = None) -> Response:
         try:
             data = None
-            if ("name" in request.query_params):
-                data = self.use_case.execute(
-                    request.query_params["name"])
-            if (data == None):
+            if "name" in request.query_params:
+                data = self.use_case.execute(request.query_params["name"])
+            if data is None:
                 return Response(None, status=HTTPStatus.BAD_REQUEST)
             response = self.serializer_class(data, many=True)
             return Response(response.data, status=HTTPStatus.ACCEPTED)
         except KeyError as e:
-            return Response(str(e), status=HTTPStatus.UNPROCESSABLE_ENTITY, exception=True)
+            return Response(
+                str(e), status=HTTPStatus.UNPROCESSABLE_ENTITY, exception=True
+            )
