@@ -31,18 +31,23 @@ class GetSummaryGainSellerUseCase(UseCase):
         self.total_to_pay = 0
         summary: List[SummaryGainSellerDTO] = []
         for sale in sales:
-            sale_product: QuerySet = self.repository_sale_product.find_by_parameter({
-                                                                                    "sale": sale.id})
-            if (sale_product is None):
+            saleproduct = sale.saleproduct_set.filter(sale_id=sale.id)
+            # sale_product: QuerySet = self.repository_sale_product.find_by_parameter({
+            #     "sale": sale.id})
+            if (saleproduct is None):
                 continue
             self.saled_products_dto = self.__get_list_saled_products__(
-                sale_product)
+                saleproduct)
+            # summary_dto = SummaryGainSellerDTO(
+            #     reference_payment=values["reference_payment"],
+            #     date_sale=values["date_created"],
+            #     sale_id=values["id"],
+            #     products=self.saled_products_dto)
             summary_dto = SummaryGainSellerDTO(
                 reference_payment=sale.reference_payment,
                 date_sale=sale.date_created,
                 sale_id=sale.id,
                 products=self.saled_products_dto)
-
             summary.append(summary_dto)
 
         pay_seller_dto = PaySellerDTO(
@@ -56,7 +61,7 @@ class GetSummaryGainSellerUseCase(UseCase):
         for item in sale_product:
             gain_seller = item.gain_seller
             saled_products.append(SaledProductDTO(
-                gain=gain_seller, sale_price=item.sale_price, name=item.product.name))
+                gain=gain_seller, sale_price=item.sale_price, name=item.product.name, quantity=item.quantity))
             self.total_to_pay = self.total_to_pay + gain_seller
         return saled_products
 

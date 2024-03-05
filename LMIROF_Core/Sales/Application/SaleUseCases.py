@@ -35,7 +35,8 @@ class CreateSaleUseCase(UseCase):
                 self, {"product": item["id"]}
             )
 
-            gain = Decimal(item["sale_price"]) - Decimal(purchase_product.unit_price)
+            gain = Decimal(item["sale_price"]) - \
+                Decimal(purchase_product.unit_price)
             product: ProductEntity = dict_products[item["id"]]
 
             gain_seller = 0

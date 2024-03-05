@@ -39,12 +39,14 @@ class SaledProductSerializer(serializers.Serializer):
     gain = serializers.CharField(max_length=200)
     sale_price = serializers.FloatField()
     name = serializers.CharField(max_length=200)
+    quantity = serializers.IntegerField()
 
 
 class SummaryGainSellerSerializer(serializers.Serializer):
     date_sale = serializers.DateTimeField()
     reference_payment = serializers.CharField(max_length=200)
-    products = serializers.ListField(child=SaledProductSerializer())
+    products = SaledProductSerializer(many=True)
+    sale_id = serializers.IntegerField()
 
 
 class PaySellerSerializer(serializers.Serializer):

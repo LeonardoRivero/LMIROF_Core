@@ -175,7 +175,8 @@ class SaleProductRepository(Repository):
             return False
 
     def find_by_parameter(self, parameters: dict) -> Iterable[SaleProductEntity]:
-        data = SaleProduct.objects.filter(**parameters)
+        data = SaleProduct.objects.filter(
+            **parameters).select_related("product", "sale")
         if (data.exists()):
             return data
         return None
