@@ -6,6 +6,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Purchase
         fields = "__all__"
+        depth = 0
 
 
 class PurchaseProductRequestSerializer(serializers.Serializer):

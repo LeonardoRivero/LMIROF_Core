@@ -3,14 +3,12 @@ from typing import List
 from Purchases.Domain.Request import ProductPurchaseRequest
 from Sales.Domain.Request import ProductRequest
 
-from LMIROF_Core.containers import container
-
 from ..Domain.Entities import InventoryEntity
 from ..Domain.Interfaces import Repository, UseCase
 
 
 class IncrementProductByPurchaseUseCase(UseCase):
-    def __init__(self, repository: Repository = container.repositories("inventory")):
+    def __init__(self, repository: Repository):
         self.repository = repository
 
     def execute(self, list_products: List[ProductPurchaseRequest], purchase_id: int) -> List[InventoryEntity]:
@@ -22,7 +20,7 @@ class IncrementProductByPurchaseUseCase(UseCase):
                 entity: InventoryEntity = self.repository.get_by_id(
                     product["product_id"])
                 input_total = entity.input + int(product["quantity"])
-                stock = input_total-entity.output
+                stock = entity.stock + int(product["quantity"])
                 entity_updated = InventoryEntity(product=product["product_id"],
                                                  input=input_total,
                                                  output=entity.output,
@@ -52,11 +50,11 @@ class DecrementProductBySaleUseCase(UseCase):
             for product in list_products:
                 entity: InventoryEntity = self.repository.get_by_id(
                     product["id"])
-                quantity = entity.stock - int(product["quantity"])
-                output = entity.output + int(product["quantity"])
-                entity_updated = InventoryEntity(stock=quantity,
+                output_total = entity.output + int(product["quantity"])
+                stock = entity.stock - int(product["quantity"])
+                entity_updated = InventoryEntity(stock=stock,
                                                  input=entity.input,
-                                                 output=output,
+                                                 output=output_total,
                                                  operation_type="SALE",
                                                  product=product["id"],
                                                  operation_id=sale_id)

@@ -18,11 +18,16 @@ from LMIROF_Core.containers import container
 class CreatePurchase(generics.CreateAPIView):
     serializer_class = container.purchase_serializer()
     use_case = CreatePurchaseUseCase(
-        container.repositories("purchase"), container.repositories("purchase_product")
+        container.repositories(
+            "purchase"), container.repositories("purchase_product")
     )
     increment_product_use_case = IncrementProductByPurchaseUseCase(
-        container.repositories("purchase_product"),
+        container.repositories("inventory"),
     )
+
+    def get_serializer_class(self):
+        self.serializer_class.Meta.depth = int(1)
+        return self.serializer_class
 
     @extend_schema(
         request=container.purchase_request_serializer(),
@@ -33,18 +38,18 @@ class CreatePurchase(generics.CreateAPIView):
         try:
             data = PurchaseRequest(**request.data)
             record = self.use_case.execute(data)
-            response = self.serializer_class(record, many=False)
+            response = self.get_serializer(record, many=False)
             self.increment_product_use_case.execute(data.products, record.id)
             return Response(response.data, HTTPStatus.CREATED)
-        except TypeError as e:
-            exception = e
+        except TypeError:
             return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
 class GetPurchaseByID(generics.RetrieveAPIView):
     serializer_class = container.purchase_serializer()
     use_case: UseCase = GetPurchaseByIdUseCase(
-        container.repositories("purchase"), container.repositories("purchase_product")
+        container.repositories(
+            "purchase"), container.repositories("purchase_product")
     )
 
     def get_serializer_class(self):

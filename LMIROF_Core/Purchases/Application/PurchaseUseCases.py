@@ -11,7 +11,7 @@ class CreatePurchaseUseCase(UseCase):
 
     def __init__(
         self,
-        repository_purchase: Type[Repository],
+        repository_purchase: Repository,
         repository_purchase_product: Repository,
     ):
         self.repository_purchase = repository_purchase
@@ -23,10 +23,10 @@ class CreatePurchaseUseCase(UseCase):
             provider=data.provider,
             reference_invoice=data.reference_invoice,
             subtotal=data.subtotal,
-            tax=int(data.tax * 100),
+            tax=int(data.tax),
             total=data.total,
         )
-        record: PurchaseEntity = self.repository_purchase().add(entity)
+        record: PurchaseEntity = self.repository_purchase.add(entity)
         if record is None:
             raise TypeError()
 
