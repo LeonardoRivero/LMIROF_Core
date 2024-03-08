@@ -34,9 +34,9 @@ class CreateSaleUseCase(UseCase):
             purchase_product: PurchaseProductEntity = self.mediator.notify(
                 self, {"product": item["id"]}
             )
+            unit_price = purchase_product.total / purchase_product.quantity
 
-            gain = Decimal(item["sale_price"]) - \
-                Decimal(purchase_product.unit_price)
+            gain = Decimal(item["sale_price"]) - Decimal(unit_price)
             product: ProductEntity = dict_products[item["id"]]
 
             gain_seller = 0
@@ -45,14 +45,13 @@ class CreateSaleUseCase(UseCase):
                 gain_seller = Decimal(12000)
                 gain_business = gain - gain_seller
             else:
-                gain_seller = round(
-                    (Decimal(product.distribution_type.profit_seller) * Decimal(gain)),
-                    2,
-                )
+                profit_seller = Decimal(
+                    product.distribution_type.profit_seller)
+                gain_seller = round((profit_seller * gain), 2,)
 
-                gain_business = Decimal(
-                    product.distribution_type.profit_bussiness
-                ) * Decimal(gain)
+                gain_business = (
+                    Decimal(product.distribution_type.profit_bussiness) * gain
+                )
 
             total = float(item["sale_price"]) * int(item["quantity"])
             sale_product = SaleProductEntity(
@@ -107,4 +106,6 @@ class GetSaleByReference(UseCase):
         self.repository_sale = repository_sale
 
     def execute(self, reference: str) -> SaleEntity:
-        return self.repository_sale.find_by_parameter({"reference_payment": reference})
+        return self.repository_sale.find_by_parameter(
+            {"reference_payment": reference.title()}
+        )

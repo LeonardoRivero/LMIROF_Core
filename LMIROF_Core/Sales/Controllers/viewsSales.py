@@ -2,17 +2,18 @@ import datetime
 from http import HTTPStatus
 
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from Inventory.Application.InventoryUseCases import \
-    DecrementProductBySaleUseCase
+from Inventory.Application.InventoryUseCases import DecrementProductBySaleUseCase
 from Providers.Domain.Interfaces import UseCase
 from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
 from Sales.Application.MediatorUseCase import ConcreteMediator
-from Sales.Application.SaleUseCases import (CreateSaleUseCase,
-                                            GetSaleByIdUseCase,
-                                            GetSaleByReference,
-                                            GetSalesBySellerIdUseCase)
+from Sales.Application.SaleUseCases import (
+    CreateSaleUseCase,
+    GetSaleByIdUseCase,
+    GetSaleByReference,
+    GetSalesBySellerIdUseCase,
+)
 from Sales.Application.SellerUseCases import GetSummaryGainSellerUseCase
 from Sales.Domain.DTOs import PaySellerDTO
 from Sales.Domain.Interfaces import Mediator
@@ -193,7 +194,7 @@ class FilterSale(generics.RetrieveAPIView):
                 data = self.use_case.execute(
                     request.query_params["reference"])
             if (data is None):
-                return Response(None, status=HTTPStatus.BAD_REQUEST)
+                return Response(None, status=HTTPStatus.NO_CONTENT)
             response = self.get_serializer(data, many=True)
             return Response(response.data, status=HTTPStatus.ACCEPTED)
         except KeyError as e:
