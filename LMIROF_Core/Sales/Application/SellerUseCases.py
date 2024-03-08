@@ -58,7 +58,6 @@ class GetSummaryGainSellerUseCase(UseCase):
 
     def __get_list_saled_products__(self, sale_product: QuerySet[SaleProductEntity]) -> List[SaledProductDTO]:
         saled_products: List[SaledProductDTO] = []
-
         for item in sale_product:
             gain_seller = item.gain_seller
             saled_products.append(SaledProductDTO(

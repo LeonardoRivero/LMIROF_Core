@@ -1,7 +1,8 @@
 from django.db.models.query import QuerySet
 from Providers.Application.ProductUseCases import GetProductByIdUseCase
 from Providers.Domain.Entities import ProductEntity
-from Purchases.Application.PurchaseUseCases import GetPurchaseProductByFiltersUseCase
+from Purchases.Application.PurchaseUseCases import \
+    GetPurchaseProductByFiltersUseCase
 from Sales.Application.SaleUseCases import GetSalesBySellerIdUseCase
 from Sales.Application.SellerUseCases import GetSellerByIdUseCase
 from Sales.Domain.Entities import SellerEntity

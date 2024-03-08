@@ -193,7 +193,7 @@ class FilterSale(generics.RetrieveAPIView):
                 data = self.use_case.execute(
                     request.query_params["reference"])
             if (data is None):
-                return Response(None, status=HTTPStatus.BAD_REQUEST)
+                return Response(None, status=HTTPStatus.NO_CONTENT)
             response = self.get_serializer(data, many=True)
             return Response(response.data, status=HTTPStatus.ACCEPTED)
         except KeyError as e:
