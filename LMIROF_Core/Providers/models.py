@@ -33,8 +33,10 @@ class Product (models.Model):
         Provider, on_delete=models.CASCADE, related_name="products")
     reference = models.CharField(max_length=20)
     status = models.BooleanField()
-    distribution_type = models.ForeignKey(
-        DistributionProductType, on_delete=models.CASCADE, related_name="products")
+    sale_price=models.FloatField()
+    profit_seller = models.FloatField()
+    profit_bussiness = models.FloatField()
+    profit_operational = models.FloatField()
     date_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 

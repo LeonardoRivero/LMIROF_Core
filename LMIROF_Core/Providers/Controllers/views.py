@@ -23,7 +23,7 @@ class CreateProvider(generics.CreateAPIView):
     use_case = CreateProviderUseCase()
 
     @extend_schema(
-        request=ProviderSerializer,
+        request=ProviderSerializer(),
         description="Create provider",
         summary="Create a new provider ",
     )
@@ -32,8 +32,8 @@ class CreateProvider(generics.CreateAPIView):
             entity = ProviderEntity(**request.data)
             record = self.use_case.execute(entity)
             return Response(model_to_dict(record), HTTPStatus.CREATED)
-        except TypeError:
-            return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
+        except TypeError as e :
+            return Response(str(e), HTTPStatus.UNPROCESSABLE_ENTITY,exception=True)
 
 
 @extend_schema(
@@ -67,8 +67,13 @@ class CreateProduct(generics.CreateAPIView):
             entity = ProductEntity(**request.data)
             record = self.use_case.execute(entity)
             return Response(model_to_dict(record), HTTPStatus.CREATED)
-        except TypeError:
-            return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
+        except TypeError as e:
+            print(e)
+            return Response(str(e.args), HTTPStatus.UNPROCESSABLE_ENTITY)
+        except ValueError as e:
+            print(e)
+            return Response(str(e), HTTPStatus.UNPROCESSABLE_ENTITY)
+        
 
 
 @extend_schema(

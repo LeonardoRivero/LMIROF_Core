@@ -7,7 +7,7 @@ from Purchases.Domain.Entities import PurchaseProductEntity
 
 from ..Domain.Entities import SaleEntity, SaleProductEntity
 from ..Domain.Interfaces import Repository, UseCase
-from ..Domain.Request import SaleRequest, SummarySellerRequest
+from ..Domain.Request import ProductRequest, SaleRequest, SummarySellerRequest
 
 
 class CreateSaleUseCase(UseCase):
@@ -26,46 +26,55 @@ class CreateSaleUseCase(UseCase):
         sale_entity = SaleEntity(
             reference_payment=request.reference_payment, seller=request.seller
         )
-        record: SaleEntity = self.repository_sale.add(sale_entity)
-        if record is None:
-            raise TypeError()
+        # record: SaleEntity = self.repository_sale.add(sale_entity)
+        # if record is None:
+        #     raise TypeError()
 
         for item in request.products:
-            purchase_product: PurchaseProductEntity = self.mediator.notify(
-                self, {"product": item["id"]}
-            )
-            unit_price = purchase_product.total / purchase_product.quantity
-
-            gain = Decimal(item["sale_price"]) - Decimal(unit_price)
             product: ProductEntity = dict_products[item["id"]]
+            sale_product_entity=self.adjust_values_on_sale_lower(item,product)
 
-            gain_seller = 0
-            gain_business = 0
-            if product.distribution_type.description.lower() == "kit":
-                gain_seller = Decimal(12000)
-                gain_business = gain - gain_seller
-            else:
-                profit_seller = Decimal(
-                    product.distribution_type.profit_seller)
-                gain_seller = round((profit_seller * gain), 2,)
+        #     purchase_product: PurchaseProductEntity = self.mediator.notify(
+        #         self, {"product": item["id"]}
+        #     )
+        #     unit_price = purchase_product.total / purchase_product.quantity
 
-                gain_business = (
-                    Decimal(product.distribution_type.profit_bussiness) * gain
-                )
+        #     gain = Decimal(item["sale_price"]) - Decimal(unit_price)
+        #     product: ProductEntity = dict_products[item["id"]]
 
-            total = float(item["sale_price"]) * int(item["quantity"])
-            sale_product = SaleProductEntity(
-                quantity=int(item["quantity"]),
+        #     gain_seller = 0
+        #     gain_business = 0
+        #     total = float(item["sale_price"]) * int(item["quantity"])
+        #     sale_product = SaleProductEntity(
+        #         quantity=int(item["quantity"]),
+        #         gain_seller=round(gain_seller, 2),
+        #         gain_business=round(gain_business, 2),
+        #         sale_price=float(item["sale_price"]),
+        #         sale=record.id,
+        #         product=item["id"],
+        #         total=total,
+        #     )
+        #     self.repository_sale_product.add(sale_product)
+        # return record
+    def adjust_values_on_sale_lower(self,product_request:ProductRequest,product:ProductEntity)->SaleProductEntity:
+            purchase_product: PurchaseProductEntity = self.mediator.notify(
+                self, {"product": product_request["id"]}
+            )
+            unit_price=purchase_product.total/purchase_product.quantity
+            raw_gain=float(product_request["sale_price"]) - float(unit_price)
+            gain_business=(float(product.sale_price)-float(unit_price))*product.profit_bussiness
+            gain_operational=(float(product.sale_price)-float(unit_price))*product.profit_operational
+
+            if raw_gain - (gain_business + gain_operational) < 0:
+                raise ValueError("Sale price is not allowed") 
+            gain_seller=raw_gain - gain_business - gain_operational
+
+            return SaleProductEntity(
                 gain_seller=round(gain_seller, 2),
                 gain_business=round(gain_business, 2),
-                sale_price=float(item["sale_price"]),
-                sale=record.id,
-                product=item["id"],
-                total=total,
+                sale_price=float(product_request["sale_price"]),
+                gain_operational=gain_operational
             )
-            self.repository_sale_product.add(sale_product)
-        return record
-
 
 class GetSalesBySellerIdUseCase(UseCase):
     def __init__(self, repository_sale: Type[Repository]):

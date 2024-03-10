@@ -7,7 +7,8 @@ from rest_framework import serializers
 from .Domain.Interfaces import Repository
 from .Domain.Entities import InventoryEntity
 from dataclasses import asdict
-from typing import Iterable
+from typing import Iterable, Type
+from django.db.models import Model
 
 
 class InventoryRepository(Repository):
@@ -24,14 +25,14 @@ class InventoryRepository(Repository):
             return record
         raise ValidationError
 
-    def get_by_id(self, pk: int) -> QuerySet[InventoryEntity]:
+    def get_by_id(self, pk: int) -> Type[Model]:
         try:
             return Inventory.objects.get(pk=pk)
         except ObjectDoesNotExist:
             raise Http404
 
     def get_all(self):
-        return Inventory.objects.all()
+        return Inventory.objects.all().select_related("product")
 
     def update(self, entity: InventoryEntity, pk: int) -> InventoryEntity:
         current_record = self.get_by_id(pk)

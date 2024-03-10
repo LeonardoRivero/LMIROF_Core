@@ -14,5 +14,6 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ["id", "name", "provider",
-                  "reference", "status", "distribution_type"]
+                  "reference", "status","sale_price","profit_seller",
+                  "profit_bussiness","profit_operational"]
         depth = 0

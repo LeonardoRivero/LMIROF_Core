@@ -45,7 +45,7 @@ class CreateSale(generics.CreateAPIView):
             response = self.serializer_class(data, many=False)
             return Response(response.data, HTTPStatus.CREATED)
         except (TypeError, ValueError) as e:
-            return Response(e, HTTPStatus.UNPROCESSABLE_ENTITY)
+            return Response(str(e), HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
 @extend_schema(
