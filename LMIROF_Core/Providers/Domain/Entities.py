@@ -20,6 +20,8 @@ class ProductEntity:
     name: str
     reference: str
     status: bool = True
-    distribution_type: int = 0
     id: int = 0
     provider: int = 0
+    sale_price: float = 0
+    gain_business: float = 0
+    gain_operational: float = 0

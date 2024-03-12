@@ -36,7 +36,7 @@ class GetSummaryGainSellerUseCase(UseCase):
             #     "sale": sale.id})
             if (saleproduct is None):
                 continue
-            self.saled_products_dto = self.__get_list_saled_products__(
+            self.saled_products_dto = self.__get_list_saled_products(
                 saleproduct)
             # summary_dto = SummaryGainSellerDTO(
             #     reference_payment=values["reference_payment"],
@@ -51,21 +51,25 @@ class GetSummaryGainSellerUseCase(UseCase):
             summary.append(summary_dto)
 
         pay_seller_dto = PaySellerDTO(
-            name_seller=self.__getSeller__(summary_seller_request.id),
+            name_seller=self.__getSeller(summary_seller_request.id),
             resume=summary,
             total_to_pay=self.total_to_pay)
         return pay_seller_dto
 
-    def __get_list_saled_products__(self, sale_product: QuerySet[SaleProductEntity]) -> List[SaledProductDTO]:
+    def __get_list_saled_products(self, sale_product: QuerySet[SaleProductEntity]) -> List[SaledProductDTO]:
         saled_products: List[SaledProductDTO] = []
         for item in sale_product:
             gain_seller = item.gain_seller
             saled_products.append(SaledProductDTO(
-                gain=gain_seller, sale_price=item.sale_price, name=item.product.name, quantity=item.quantity))
+                gain=gain_seller,
+                sale_price=item.product.sale_price,
+                saled_to=item.sale_price,
+                name=item.product.name,
+                quantity=item.quantity))
             self.total_to_pay = self.total_to_pay + gain_seller
         return saled_products
 
-    def __getSeller__(self, seller_id: int) -> str:
+    def __getSeller(self, seller_id: int) -> str:
         seller: SellerEntity = self.mediator.getSellerById(seller_id)
         name_seller = "".join([seller.name, ' ', seller.last_name])
         return name_seller

@@ -2,14 +2,12 @@ from typing import Iterable
 
 from django.db.models import QuerySet
 
-from LMIROF_Core.containers import container
-
 from ..Domain.Entities import ProductEntity
 from ..Domain.Interfaces import Repository, UseCase
 
 
 class CreateProductUseCase(UseCase):
-    def __init__(self, repository: Repository = container.repositories("product")):
+    def __init__(self, repository: Repository):
         self.repository = repository
 
     def execute(self, entity: ProductEntity) -> ProductEntity:
@@ -18,7 +16,7 @@ class CreateProductUseCase(UseCase):
 
 
 class GetProductByNameUseCase(UseCase):
-    def __init__(self, repository: Repository = container.repositories("product")):
+    def __init__(self, repository: Repository):
         self.repository = repository
 
     def execute(self, name: str) -> Iterable[ProductEntity]:

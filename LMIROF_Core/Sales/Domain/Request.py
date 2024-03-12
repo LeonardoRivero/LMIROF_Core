@@ -1,14 +1,15 @@
-from dataclasses import dataclass, field
-from typing import Iterable, List
 import datetime
+from dataclasses import dataclass, field
+from typing import List
+
+
 import dateutil.parser
 
 
 @dataclass
 class ProductRequest:
     quantity: int = 0
-    sale_price: float = 0
-    product: int = 0
+    sale_total: float = 0
     id: int = 0
 
 

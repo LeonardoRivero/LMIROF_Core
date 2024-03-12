@@ -23,7 +23,6 @@ urlpatterns = [
     #     path('api/sale/create/', CreateSale.as_view()),
     #     path('api/sale/list/', ListSales.as_view()),
     #     path('api/saleproduct/list/', ListSalesProduct.as_view()),
-    #     path('api/saleproduct/filter/', SearchByFilterSale.as_view()),
-    #     path('api/summaryseller/<int:seller_id>/',
-    #          SummarySalesBySeller.as_view()),
+    #     path('api/inventory/filter/', FilterProduct.as_view()),
+    path('api/inventory/<int:product_id>/',GetStockByProductId.as_view()),
 ]

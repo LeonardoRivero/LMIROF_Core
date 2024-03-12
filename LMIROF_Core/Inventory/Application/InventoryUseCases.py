@@ -1,4 +1,6 @@
-from typing import List
+from typing import List, Type
+
+from django.db.models import QuerySet,Model
 
 from Purchases.Domain.Request import ProductPurchaseRequest
 from Sales.Domain.Request import ProductRequest
@@ -64,3 +66,12 @@ class DecrementProductBySaleUseCase(UseCase):
             new_entity = InventoryEntity(
                 operation_type="SALE", carrying_amount=int(product["quantity"])*float(product["sale_price"]), available_quantity=int(product["quantity"]), product=product["id"])
             self.repository.add(new_entity)
+
+
+class GetStockByProductIdUseCase(UseCase):
+    def __init__(self, repository: Repository):
+        self.repository = repository
+
+    def execute(self, product_id: str) -> Type[Model]:
+        record: Model = self.repository.get_by_id(product_id)
+        return record

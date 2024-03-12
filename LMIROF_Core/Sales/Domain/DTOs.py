@@ -7,6 +7,7 @@ from typing import List
 class SaledProductDTO:
     gain: float
     sale_price: float
+    saled_to: float
     name: str
     quantity: int
 

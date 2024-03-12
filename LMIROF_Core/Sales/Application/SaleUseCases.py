@@ -1,4 +1,3 @@
-from decimal import Decimal
 from typing import List, Type
 
 import dateutil.parser
@@ -23,47 +22,43 @@ class CreateSaleUseCase(UseCase):
             response = self.mediator.getProductById(item["id"])
             dict_products.update({response.id: response})
 
-        sale_entity = SaleEntity(
-            reference_payment=request.reference_payment, seller=request.seller
-        )
-        record: SaleEntity = self.repository_sale.add(sale_entity)
-        if record is None:
-            raise TypeError()
+        list_sale_product: List[SaleProductEntity] = []
 
         for item in request.products:
             purchase_product: PurchaseProductEntity = self.mediator.notify(
                 self, {"product": item["id"]}
             )
-            unit_price = purchase_product.total / purchase_product.quantity
-
-            gain = Decimal(item["sale_price"]) - Decimal(unit_price)
+            quantity = int(item["quantity"])
             product: ProductEntity = dict_products[item["id"]]
+            cost_price = purchase_product.total/purchase_product.quantity
+            sale_price = float(item["sale_total"])/quantity
+            raw_gain = sale_price - float(cost_price)
+            gain_seller = raw_gain - product.gain_business - product.gain_operational
 
-            gain_seller = 0
-            gain_business = 0
-            if product.distribution_type.description.lower() == "kit":
-                gain_seller = Decimal(12000)
-                gain_business = gain - gain_seller
-            else:
-                profit_seller = Decimal(
-                    product.distribution_type.profit_seller)
-                gain_seller = round((profit_seller * gain), 2,)
+            if sale_price < product.sale_price and gain_seller < 0:
+                raise ValueError("Sale price is not allowed")
 
-                gain_business = (
-                    Decimal(product.distribution_type.profit_bussiness) * gain
-                )
-
-            total = float(item["sale_price"]) * int(item["quantity"])
             sale_product = SaleProductEntity(
-                quantity=int(item["quantity"]),
-                gain_seller=round(gain_seller, 2),
-                gain_business=round(gain_business, 2),
-                sale_price=float(item["sale_price"]),
-                sale=record.id,
+                quantity=quantity,
+                gain_seller=round(gain_seller, 2)*quantity,
+                gain_business=product.gain_business*quantity,
+                sale_price=sale_price,
+                sale=0,
                 product=item["id"],
-                total=total,
+                total=sale_price * quantity,
+                gain_operational=product.gain_operational*quantity
             )
-            self.repository_sale_product.add(sale_product)
+
+            list_sale_product.append(sale_product)
+
+        sale_entity = SaleEntity(
+            reference_payment=request.reference_payment, seller=request.seller
+        )
+        record: SaleEntity = self.repository_sale.add(sale_entity)
+
+        for sale_products in list_sale_product:
+            sale_products.sale = record.id
+            self.repository_sale_product.add(sale_products)
         return record
 
 

@@ -30,10 +30,14 @@ class CreateSale(generics.CreateAPIView):
     decrement_product_use_case = DecrementProductBySaleUseCase(
         container.repositories("inventory"))
 
+    def get_serializer_class(self):
+        self.serializer_class.Meta.depth = 1
+        return self.serializer_class
+
     @extend_schema(
         request=container.sale_request_serializer(),
         description='Create sale',
-        summary="Create a new sale ",
+        summary="Create a new sale "
     )
     def post(self, request: Request):
         try:
@@ -41,10 +45,12 @@ class CreateSale(generics.CreateAPIView):
             self.use_case.mediator = self.mediator
             data = self.use_case.execute(entity)
             self.decrement_product_use_case.execute(entity.products, data.id)
-            response = self.serializer_class(data, many=False)
+            response = self.get_serializer(data, many=False)
             return Response(response.data, HTTPStatus.CREATED)
-        except (TypeError, ValueError) as e:
-            return Response(e, HTTPStatus.UNPROCESSABLE_ENTITY)
+        except (TypeError) as e:
+            return Response(str(e), HTTPStatus.UNPROCESSABLE_ENTITY)
+        except ValueError as e:
+            return Response(str(e), HTTPStatus.BAD_REQUEST)
 
 
 @extend_schema(

@@ -1,7 +1,5 @@
-from dataclasses import dataclass
-from typing import Iterable, List
-from Providers.Domain.Entities import ProductEntity
 import datetime
+from dataclasses import dataclass
 
 
 @dataclass
@@ -30,6 +28,7 @@ class SaleProductEntity:
     quantity: int = 0
     gain_seller: float = 0
     gain_business: float = 0
+    gain_operational: float = 0
     sale_price: float = 0
     product: int = 0
     sale: int = 0
