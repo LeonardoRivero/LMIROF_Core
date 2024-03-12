@@ -1,6 +1,7 @@
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Generic, Iterable, TypeVar
+from typing import Generic, Iterable, Type, TypeVar
 from django.db.models.query import QuerySet
+from django.db.models import Model
 from ..Domain.Entities import InventoryEntity
 
 
@@ -19,7 +20,7 @@ class Repository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_by_id(self, id: int) -> object:
+    def get_by_id(self, id: int) -> Type[Model]:
         raise NotImplementedError
 
     @abstractmethod

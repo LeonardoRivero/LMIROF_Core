@@ -2,10 +2,8 @@ from http import HTTPStatus
 
 from django.forms import model_to_dict
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from Providers.Application.ProductUseCases import (
-    CreateProductUseCase,
-    GetProductByNameUseCase,
-)
+from Providers.Application.ProductUseCases import (CreateProductUseCase,
+                                                   GetProductByNameUseCase)
 from Providers.Application.ProviderUseCases import CreateProviderUseCase
 from Providers.Domain.Entities import ProductEntity, ProviderEntity
 from Providers.serializers import ProviderSerializer
@@ -23,7 +21,7 @@ class CreateProvider(generics.CreateAPIView):
     use_case = CreateProviderUseCase()
 
     @extend_schema(
-        request=ProviderSerializer,
+        request=ProviderSerializer(),
         description="Create provider",
         summary="Create a new provider ",
     )
@@ -32,8 +30,8 @@ class CreateProvider(generics.CreateAPIView):
             entity = ProviderEntity(**request.data)
             record = self.use_case.execute(entity)
             return Response(model_to_dict(record), HTTPStatus.CREATED)
-        except TypeError:
-            return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
+        except TypeError as e:
+            return Response(str(e), HTTPStatus.UNPROCESSABLE_ENTITY, exception=True)
 
 
 @extend_schema(
@@ -55,7 +53,7 @@ class ListProviders(generics.ListAPIView):
 
 class CreateProduct(generics.CreateAPIView):
     serializer_class = container.product_serializer()
-    use_case = CreateProductUseCase()
+    use_case = CreateProductUseCase(container.repositories("product"))
 
     @extend_schema(
         request=container.product_serializer(),
@@ -67,8 +65,10 @@ class CreateProduct(generics.CreateAPIView):
             entity = ProductEntity(**request.data)
             record = self.use_case.execute(entity)
             return Response(model_to_dict(record), HTTPStatus.CREATED)
-        except TypeError:
-            return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
+        except TypeError as e:
+            return Response(str(e.args), HTTPStatus.UNPROCESSABLE_ENTITY)
+        except ValueError as e:
+            return Response(str(e), HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
 @extend_schema(
@@ -90,7 +90,7 @@ class ListProduct(generics.ListAPIView):
 
 class FilterProduct(generics.RetrieveAPIView):
     serializer_class = container.product_serializer()
-    use_case = GetProductByNameUseCase()
+    use_case = GetProductByNameUseCase(container.repositories("product"))
 
     @extend_schema(
         responses=container.product_serializer(),

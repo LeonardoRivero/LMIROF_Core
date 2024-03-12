@@ -45,6 +45,7 @@ class SaleProduct(models.Model):
     quantity = models.IntegerField()
     gain_seller = models.DecimalField(max_digits=9, decimal_places=2)
     gain_business = models.DecimalField(max_digits=9, decimal_places=2)
+    gain_operational = models.DecimalField(max_digits=9, decimal_places=2)
     sale_price = models.DecimalField(max_digits=9, decimal_places=2)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE)

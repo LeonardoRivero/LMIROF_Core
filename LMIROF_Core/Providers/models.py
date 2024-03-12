@@ -1,6 +1,6 @@
 from cities_light.models import Country, Region, SubRegion
 from django.db import models
-from Settings.models import DistributionProductType, IDType
+from Settings.models import IDType
 
 # Create your models here.
 
@@ -33,8 +33,9 @@ class Product (models.Model):
         Provider, on_delete=models.CASCADE, related_name="products")
     reference = models.CharField(max_length=20)
     status = models.BooleanField()
-    distribution_type = models.ForeignKey(
-        DistributionProductType, on_delete=models.CASCADE, related_name="products")
+    sale_price = models.FloatField()
+    gain_business = models.FloatField()
+    gain_operational = models.FloatField()
     date_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 

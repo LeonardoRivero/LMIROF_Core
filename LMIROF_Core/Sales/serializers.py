@@ -14,6 +14,7 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = ["id", "seller", "product", "reference_payment"]
+        depth = 0
 
 
 class SaleProductSerializer(serializers.ModelSerializer):
@@ -25,7 +26,7 @@ class SaleProductSerializer(serializers.ModelSerializer):
 
 class ProductRequestSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
-    sale_price = serializers.DecimalField(max_digits=9, decimal_places=2)
+    sale_total = serializers.DecimalField(max_digits=9, decimal_places=2)
     id = serializers.IntegerField()
 
 
@@ -38,6 +39,7 @@ class SaleRequestSerializer(serializers.Serializer):
 class SaledProductSerializer(serializers.Serializer):
     gain = serializers.CharField(max_length=200)
     sale_price = serializers.FloatField()
+    saled_to = serializers.FloatField()
     name = serializers.CharField(max_length=200)
     quantity = serializers.IntegerField()
 
