@@ -22,7 +22,7 @@ class CreateSeller(generics.CreateAPIView):
 
     @extend_schema(
         request=container.seller_serializer(),
-        description='Create seller',
+        description="Create seller",
         summary="Create a new seller ",
     )
     def post(self, request: Request):
@@ -30,13 +30,13 @@ class CreateSeller(generics.CreateAPIView):
             entity = SellerEntity(**request.data)
             record = self.use_case.execute(entity)
             return Response(model_to_dict(record), HTTPStatus.CREATED)
-        except TypeError:
-            return Response(None, HTTPStatus.UNPROCESSABLE_ENTITY)
+        except TypeError as e:
+            return Response(str(e), HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
 @extend_schema(
     request=container.seller_serializer(),
-    description='List sellers',
+    description="List sellers",
     summary="List all sellers ",
 )
 class ListSeller(generics.ListAPIView):
@@ -48,4 +48,9 @@ class ListSeller(generics.ListAPIView):
         return self.serializer_class
 
     def get_queryset(self):
-        return container.model_seller().objects.select_related("gender", "identification_type").defer("date_created", "last_modified").filter(status=True)
+        return (
+            container.model_seller()
+            .objects.select_related("gender", "identification_type")
+            .defer("date_created", "last_modified")
+            .filter(status=True)
+        )

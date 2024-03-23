@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Generic, Iterable, TypeVar
+from typing import Generic, Iterable, Type, TypeVar
 
+from django.db.models import Model
 from django.db.models.query import QuerySet
 from Providers.Domain.Entities import ProductEntity
 from Sales.Domain.Request import SummarySellerRequest
 
 from ..Domain.Entities import SellerEntity
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Mediator(ABC):
@@ -24,6 +25,12 @@ class Mediator(ABC):
     def getResumeSalesSeller(self, request: SummarySellerRequest):
         pass
 
+    def getAllOrdersPending(self) -> QuerySet:
+        pass
+
+    def toFinishOrder(self, id_order: int) -> SellerEntity:
+        pass
+
 
 class UseCase(ABC):
 
@@ -31,7 +38,7 @@ class UseCase(ABC):
         self._mediator = mediator
 
     @abstractmethod
-    def execute(self, payload: Generic[T]) -> Generic[T] or Iterable[Generic[T]]:
+    def execute(self, payload: Generic[T]) -> Generic[T] or Iterable[Generic[T]]:  # type: ignore
         raise NotImplementedError
 
     @property
@@ -49,11 +56,13 @@ class Repository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_by_id(self, id: int) -> object:
+    def get_by_id(self, id: int) -> Type[Model]:
         raise NotImplementedError
 
     @abstractmethod
-    def get_all(self, ):
+    def get_all(
+        self,
+    ):
         raise NotImplementedError
 
     @abstractmethod
@@ -65,7 +74,7 @@ class Repository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def find_by_parameter(self, parameters: dict) -> QuerySet:
+    def find_by_parameter(self, parameters: dict) -> QuerySet | None:
         raise NotImplementedError
 
     @abstractmethod

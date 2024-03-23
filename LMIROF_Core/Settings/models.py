@@ -30,3 +30,9 @@ class DistributionProductType(models.Model):
     profit_bussiness = models.FloatField()
     profit_operational = models.FloatField()
     objects = models.Manager()
+
+
+class PaymentMethod(models.Model):
+    id = models.AutoField(primary_key=True)
+    description = models.CharField(max_length=50, null=False)
+    code = models.CharField(max_length=15, null=False)

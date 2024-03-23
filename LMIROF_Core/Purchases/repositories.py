@@ -4,11 +4,12 @@ from typing import Iterable
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import ProtectedError, QuerySet
 from django.http import Http404
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from Purchases.Domain.Entities import PurchaseEntity, PurchaseProductEntity
 from Purchases.Domain.Interfaces import Repository
 from Purchases.models import Purchase, PurchaseProduct
-from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 
 class PurchaseRepository(Repository):
@@ -45,8 +46,7 @@ class PurchaseRepository(Repository):
 
     def update_partial(self, entity: dict, pk: int):
         current_record = self.get_by_id(pk)
-        serializer = self.SaverSerializer(
-            current_record, data=entity, partial=True)
+        serializer = self.SaverSerializer(current_record, data=entity, partial=True)
         if serializer.is_valid():
             record = serializer.save()
             return record
@@ -62,7 +62,7 @@ class PurchaseRepository(Repository):
 
     def find_by_parameter(self, parameters: dict) -> Iterable[PurchaseEntity]:
         data = Purchase.objects.filter(**parameters)
-        if (data.exists()):
+        if data.exists():
             return data
         return None
 
@@ -101,8 +101,7 @@ class PurchaseProductRepository(Repository):
 
     def update_partial(self, entity: dict, pk: int):
         current_record = self.get_by_id(pk)
-        serializer = self.SaverSerializer(
-            current_record, data=entity, partial=True)
+        serializer = self.SaverSerializer(current_record, data=entity, partial=True)
         if serializer.is_valid():
             record = serializer.save()
             return record
@@ -117,7 +116,9 @@ class PurchaseProductRepository(Repository):
             return False
 
     def find_by_parameter(self, parameters: dict) -> Iterable[PurchaseProductEntity]:
-        data = PurchaseProduct.objects.filter(**parameters)
-        if (data.exists()):
+        data = PurchaseProduct.objects.select_related("product", "purchase").filter(
+            **parameters
+        )
+        if data.exists():
             return data
         return None

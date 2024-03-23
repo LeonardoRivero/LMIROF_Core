@@ -24,6 +24,8 @@ class Container(containers.DeclarativeContainer):
         purchase=providers.Singleton(repos_purchases.PurchaseRepository),
         purchase_product=providers.Singleton(repos_purchases.PurchaseProductRepository),
         inventory=providers.Singleton(repos_inventory.InventoryRepository),
+        order=providers.Singleton(repos_sales.OrderRepository),
+        order_product=providers.Singleton(repos_sales.OrderProductRepository),
     )
 
     provider_serializer = providers.Object(serializers_providers.ProviderSerializer)
@@ -38,6 +40,10 @@ class Container(containers.DeclarativeContainer):
     )
     inventory_serializer = providers.Object(serializers_inventory.InventorySerializer)
     payseller_serializer = providers.Object(serializers_sales.PaySellerSerializer)
+    order_product_request_serializer = providers.Object(
+        serializers_sales.OrderRequestSerializer
+    )
+    order_serializer = providers.Object(serializers_sales.OrderSerializer)
 
     model_provider = providers.Object(models_provider.Provider)
     model_product = providers.Object(models_provider.Product)
@@ -47,6 +53,7 @@ class Container(containers.DeclarativeContainer):
     model_purchase_product = providers.Object(models_purchases.PurchaseProduct)
     model_inventory = providers.Object(models_inventory.Inventory)
     model_purchase = providers.Object(models_purchases.Purchase)
+    model_order = providers.Object(models_sales.Order)
 
 
 container = Container()

@@ -18,9 +18,18 @@ class SellerEntity:
 @dataclass
 class SaleEntity:
     reference_payment: str
-    date_created: datetime.datetime = None
-    seller: int = 0
+    is_cash_payment: bool
+    is_finish: bool
     id: int = 0
+    seller: int = 0
+    order: int = 0
+    gain_seller: float = 0
+    gain_business: float = 0
+    gain_operational: float = 0
+    total: float = 0
+    payment_method: int = 0
+    date_created: datetime.datetime = None
+    last_modified: datetime.datetime = None
 
 
 @dataclass
@@ -34,3 +43,21 @@ class SaleProductEntity:
     sale: int = 0
     total: float = 0
     id: int = 0
+
+
+@dataclass
+class OrderProductEntity:
+    quantity: int = 0
+    product: int = 0
+    order: int = 0
+    id: int = 0
+
+
+@dataclass
+class OrderEntity:
+    seller: int = 0
+    total: float = 0
+    is_finish: bool = False
+    id: int = 0
+    date_created: datetime.datetime = None
+    last_modified: datetime.datetime = None

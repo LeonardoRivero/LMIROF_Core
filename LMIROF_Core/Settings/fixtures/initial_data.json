@@ -95,5 +95,45 @@
             "profit_bussiness": 0.52,
             "profit_operational": 0.1
         }
+    },
+    {
+        "model": "Settings.PaymentMethod",
+        "pk": 1,
+        "fields": {
+            "code": "EF",
+            "description": "Efectivo"
+        }
+    },
+    {
+        "model": "Settings.PaymentMethod",
+        "pk": 2,
+        "fields": {
+            "code": "CH",
+            "description": "Cheque"
+        }
+    },
+    {
+        "model": "Settings.PaymentMethod",
+        "pk": 3,
+        "fields": {
+            "code": "TB",
+            "description": "Transaccion Bancaria"
+        }
+    },
+    {
+        "model": "Settings.PaymentMethod",
+        "pk": 4,
+        "fields": {
+            "code": "PM",
+            "description": "Pagos Moviles"
+        }
+    },
+    {
+        "model": "Settings.PaymentMethod",
+        "pk": 5,
+        "fields": {
+            "code": "TBE",
+            "description": "Transferencia Bancaria Electronica"
+        }
     }
 ]
