@@ -1,32 +1,28 @@
-"""Pacientes App URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.urls import path
-from .Controllers.viewsSales import *
-from .Controllers.viewsSeller import *
 
+from .Controllers.viewsOrders import CreateOrder, GetOrdersPending, ListOrders
+from .Controllers.viewsSales import (
+    CreateSale,
+    FilterSale,
+    GetSaleByID,
+    ListSales,
+    ListSalesProduct,
+    SearchByFilterSale,
+    SummarySalesBySeller,
+)
+from .Controllers.viewsSeller import CreateSeller, ListSeller
 
 urlpatterns = [
-    path('api/seller/create/', CreateSeller.as_view()),
-    path('api/seller/list/', ListSeller.as_view()),
-    path('api/sale/create/', CreateSale.as_view()),
-    path('api/sale/list/', ListSales.as_view()),
-    path('api/sale/<int:sale_id>/', GetSaleByID.as_view()),
-    path('api/sale/filter/', FilterSale.as_view()),
-    path('api/saleproduct/list/', ListSalesProduct.as_view()),
-    path('api/saleproduct/filter/', SearchByFilterSale.as_view()),
-    path('api/summaryseller/<int:seller_id>/',
-         SummarySalesBySeller.as_view()),
+    path("api/seller/create/", CreateSeller.as_view()),
+    path("api/seller/list/", ListSeller.as_view()),
+    path("api/sale/create/", CreateSale.as_view()),
+    path("api/sale/list/", ListSales.as_view()),
+    path("api/sale/<int:sale_id>/", GetSaleByID.as_view()),
+    path("api/sale/filter/", FilterSale.as_view()),
+    path("api/saleproduct/list/", ListSalesProduct.as_view()),
+    path("api/saleproduct/filter/", SearchByFilterSale.as_view()),
+    path("api/summaryseller/<int:seller_id>/", SummarySalesBySeller.as_view()),
+    path("api/order/create/", CreateOrder.as_view()),
+    path("api/order/list/", ListOrders.as_view()),
+    path("api/order/pending/", GetOrdersPending.as_view()),
 ]
