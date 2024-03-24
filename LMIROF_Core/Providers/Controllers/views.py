@@ -81,7 +81,7 @@ class ListProduct(generics.ListAPIView):
     model = container.model_product()
 
     def get_queryset(self):
-        return container.model_product().objects.select_related("provider", "distribution_type").defer("date_created", "last_modified").filter(status=True)
+        return container.model_product().objects.select_related("provider").defer("date_created", "last_modified").filter(status=True)
 
     def get_serializer_class(self):
         self.serializer_class.Meta.depth = 1

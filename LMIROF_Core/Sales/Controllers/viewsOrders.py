@@ -6,6 +6,7 @@ from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
 from Sales.Domain.Request import OrderRequest
+from django.forms import model_to_dict
 
 from LMIROF_Core.containers import container
 
@@ -40,7 +41,7 @@ class CreateOrder(generics.CreateAPIView):
             data = self.use_case.execute(entity)
             self.decrement_product_use_case.execute(entity.products, data.id)
             response = self.get_serializer(data, many=False)
-            return Response(response.data, HTTPStatus.CREATED)
+            return Response(model_to_dict(data), HTTPStatus.CREATED)
         except TypeError as e:
             return Response(str(e), HTTPStatus.UNPROCESSABLE_ENTITY)
         except (ValueError, AssertionError) as e:

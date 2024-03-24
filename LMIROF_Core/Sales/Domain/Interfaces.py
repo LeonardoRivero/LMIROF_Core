@@ -52,7 +52,7 @@ class UseCase(ABC):
 
 class Repository(ABC):
     @abstractmethod
-    def add(self, entity: object):
+    def add(self, entity: object)-> Type[Model]:
         raise NotImplementedError
 
     @abstractmethod

@@ -67,8 +67,7 @@ class ListSales(generics.ListAPIView):
     def get_queryset(self):
         return (
             container.model_sale()
-            .objects.select_related("seller")
-            .prefetch_related("product")
+            .objects.select_related("seller","order","payment_method")
             .defer("date_created", "last_modified")
         )
 
